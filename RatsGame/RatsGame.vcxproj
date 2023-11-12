@@ -24,6 +24,7 @@
     <ProjectGuid>{437440ef-31c4-477b-b369-08b92db988c7}</ProjectGuid>
     <RootNamespace>OpenGLProject</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>RatsGame</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGLProject", "OpenGLProject\OpenGLProject.vcxproj", "{437440EF-31C4-477B-B369-08B92DB988C7}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RatsGame", "RatsGame\RatsGame.vcxproj", "{437440EF-31C4-477B-B369-08B92DB988C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
