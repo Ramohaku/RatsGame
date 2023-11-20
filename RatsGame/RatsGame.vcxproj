@@ -160,6 +160,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Scenes\LevelScenes.cpp" />
+    <ClCompile Include="src\Scenes\MainMenuScene.cpp" />
     <ClCompile Include="src\Entities\EdgeArray.cpp" />
     <ClCompile Include="src\Scenes\Scene.cpp" />
     <ClCompile Include="src\Entities\EnemyRats.cpp" />
@@ -185,6 +187,8 @@
     <ClCompile Include="src\Entities\UI\UISprite.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Scenes\LevelScenes.h" />
+    <ClInclude Include="src\Scenes\MainMenuScene.h" />
     <ClInclude Include="src\Entities\EdgeArray.h" />
     <ClInclude Include="src\Scenes\Scene.h" />
     <ClInclude Include="src\Entities\EnemyRats.h" />

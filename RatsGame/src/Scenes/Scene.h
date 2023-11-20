@@ -11,10 +11,10 @@ class Scene
 {
 public:
 	Scene(Window* window, const UpdateFunc& updateFunc, GLint maxTextureUnits, Shader* textureShader, Shader* shadowShader, Shader* uiShader);
-	~Scene() {}
+	virtual ~Scene() {}
 
-	void onUpdate(float deltaTime);
-	void onRender();
+	virtual void onUpdate(float deltaTime);
+	virtual void onRender();
 
 	void createLight(const Light& light);
 	Player* createPlayer(const Vec2f& center, Texture* texture);

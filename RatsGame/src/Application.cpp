@@ -3,15 +3,6 @@
 #include "Debug.h"
 #include "VertexArray.h"
 
-/*
-struct ColorVertex
-{
-    Vec2f position;
-    float rotation;
-    //Vec4f color;
-};
-*/
-
 Application::Application()
 	: m_window(/*1920, 1080,*/ "OpenGL Project", 0.03f, false)
 {
@@ -153,7 +144,7 @@ void Application::createMainMenu()
 void Application::createTestLevel()
 {
     createNewScene([](float deltaTime) {
-        std::cerr << (1.0f / deltaTime) << '\n';
+        //std::cerr << (1.0f / deltaTime) << '\n';
     });
 
     m_currentScene->createLight(Light{ Vec3f{ 1.0f, 1.0f, 0.2f }, Vec2f{ -16.0f, 0.0f }, 0.1f, .50f });
@@ -179,4 +170,9 @@ void Application::createTestLevel()
     m_currentScene->addTargetPoint(rat1, Vec2f{ 6.0f, 6.0f });
     m_currentScene->createEnemyRatSniffer(Vec2f{ -20.0f, 9.0f }, Vec2f{ 3.0f, 1.5f }, 0.0f, m_ratPlayerTexture.get());
     m_currentScene->createEnemyRatSniffer(Vec2f{ 30.0f, -4.0f }, Vec2f{ 3.0f, 1.5f }, 0.0f, m_ratPlayerTexture.get());
+
+    //for (float i = 0.0f; i < 10.0f; i++)
+    //{
+    //    m_currentScene->createEnemyRatSniffer(Vec2f{ 20.0f, 0.0f + i }, Vec2f{ 3.0f, 1.5f }, 0.0f, m_ratPlayerTexture.get());
+    //}
 }

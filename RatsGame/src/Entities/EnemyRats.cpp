@@ -154,7 +154,7 @@ void EnemyRatSniffer::updateRaysForPlayer(float deltaTime, float dist, float ang
 			m_moveMode = dist < 8.0f ? MoveMode::Run : MoveMode::Walk;
 		}
 
-		if (dist < 8.0f)
+		if (dist < 8.5f)
 		{
 			m_alarmTime = m_alarmTimeMax;
 		}
