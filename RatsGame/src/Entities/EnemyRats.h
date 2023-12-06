@@ -9,6 +9,8 @@ class EnemyRat : public Rat
 public:
 	EnemyRat(const SpriteData& spriteData, const RatData& ratData,
 		float sightDist, Player* playerPtr);
+	EnemyRat(const EnemyRat&) = delete;
+	EnemyRat(EnemyRat&&) = delete;
 	virtual ~EnemyRat() {}
 
 	virtual void onUpdate(float deltaTime) override;
@@ -31,6 +33,8 @@ class EnemyRatGuard : public EnemyRat
 {
 public:
 	EnemyRatGuard(const SpriteData& spriteData, Player* playerPtr);
+	EnemyRatGuard(const EnemyRatGuard&) = delete;
+	EnemyRatGuard(EnemyRatGuard&&) = delete;
 	~EnemyRatGuard() {}
 
 	void managePlayer(float deltaTime, float dist, float angle) override;

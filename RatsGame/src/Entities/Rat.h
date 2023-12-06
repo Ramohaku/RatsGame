@@ -12,6 +12,8 @@ class Rat : public Character, public TextureSprite
 {
 public:
 	Rat(const SpriteData& spriteData, const RatData& ratData);
+	Rat(const Rat&) = delete;
+	Rat(Rat&&) = delete;
 	virtual ~Rat() {}
 
 	virtual void onUpdate(float deltaTime) override;

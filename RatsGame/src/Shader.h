@@ -5,6 +5,8 @@ class Shader
 {
 public:
 	Shader(const std::string& filepathVertex, const std::string& filepathFragment);
+	Shader(const Shader&) = delete;
+	Shader(Shader&&) = delete;
 	~Shader();
 
 	void bind() const;

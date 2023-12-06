@@ -160,6 +160,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Scenes\EditorScene.cpp" />
     <ClCompile Include="src\Scenes\LevelScenes.cpp" />
     <ClCompile Include="src\Scenes\MainMenuScene.cpp" />
     <ClCompile Include="src\Entities\EdgeArray.cpp" />
@@ -180,6 +181,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Utils.cpp" />
+    <ClCompile Include="src\vendor\imgui\imgui.cpp" />
+    <ClCompile Include="src\vendor\imgui\imgui_demo.cpp" />
+    <ClCompile Include="src\vendor\imgui\imgui_draw.cpp" />
+    <ClCompile Include="src\vendor\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="src\vendor\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="src\vendor\imgui\imgui_tables.cpp" />
+    <ClCompile Include="src\vendor\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\vendor\stb_image\stb_image.cpp" />
     <ClCompile Include="src\Window.cpp" />
     <ClCompile Include="src\Texture.cpp" />
@@ -187,6 +195,9 @@
     <ClCompile Include="src\Entities\UI\UISprite.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\Piotr\c++\Omega\Omega\include\nlohmann\json.hpp" />
+    <ClInclude Include="..\..\..\..\Piotr\c++\Omega\Omega\include\nlohmann\json_fwd.hpp" />
+    <ClInclude Include="src\Scenes\EditorScene.h" />
     <ClInclude Include="src\Scenes\LevelScenes.h" />
     <ClInclude Include="src\Scenes\MainMenuScene.h" />
     <ClInclude Include="src\Entities\EdgeArray.h" />
@@ -203,6 +214,17 @@
     <ClInclude Include="src\Debug.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\Utils.h" />
+    <ClInclude Include="src\vendor\imgui\imconfig.h" />
+    <ClInclude Include="src\vendor\imgui\imgui.h" />
+    <ClInclude Include="src\vendor\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="src\vendor\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="src\vendor\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="src\vendor\imgui\imgui_internal.h" />
+    <ClInclude Include="src\vendor\imgui\imstb_rectpack.h" />
+    <ClInclude Include="src\vendor\imgui\imstb_textedit.h" />
+    <ClInclude Include="src\vendor\imgui\imstb_truetype.h" />
+    <ClInclude Include="src\vendor\nlohmann\json.hpp" />
+    <ClInclude Include="src\vendor\nlohmann\json_fwd.hpp" />
     <ClInclude Include="src\vendor\stb_image\stb_image.h" />
     <ClInclude Include="src\Window.h" />
     <ClInclude Include="src\Texture.h" />
@@ -210,6 +232,7 @@
     <ClInclude Include="src\Entities\UI\UISprite.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\scenesData\level1.json" />
     <None Include="res\shaders\color_shader.frag" />
     <None Include="res\shaders\color_shader.vert" />
     <None Include="res\shaders\shadow_shader.frag" />

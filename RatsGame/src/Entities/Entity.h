@@ -5,21 +5,22 @@
 
 struct SpriteData
 {
-	Vec2f center;
-	Vec2f halfSize;
+	Vec2f center = { 0.0f, 0.0f };
+	Vec2f halfSize = { 1.0f, 1.0f };
 	float rotation = 0.0f;
-	Texture* texturePtr;
+	Texture* texturePtr = nullptr;
 	Vec2f texPartScale = { 1.0f, 1.0f };
 	Vec2f texPartIndex = { 0.0f, 0.0f };
 	float flipHorizontal = 1.0f;
 	float flipVertical = 1.0f;
-	bool blocking = false;
 };
 
 class Sprite
 {
 public:
 	Sprite(const SpriteData& spriteData);
+	Sprite(const Sprite&) = delete;
+	Sprite(Sprite&&) = delete;
 	virtual ~Sprite() {}
 	virtual void onUpdate(float deltaTime) {}
 
@@ -39,7 +40,8 @@ public:
 	inline const Vec2f& getTexPartIndex() const { return m_spriteData.texPartIndex; }
 	inline float getFlipHorizontal() const { return m_spriteData.flipHorizontal; }
 	inline float getFlipVertical() const { return m_spriteData.flipVertical; }
-	inline bool isBlocking() const { return m_spriteData.blocking; }
+
+	inline SpriteData& getSpriteData() { return m_spriteData; }
 protected:
 	SpriteData m_spriteData;
 };

@@ -1,10 +1,13 @@
 #pragma once
-#include "Scenes/Scene.h"
+#include "Scenes/EditorScene.h"
+#include "Scenes/LevelScenes.h"
 
 class Application
 {
 public:
 	Application();
+	Application(const Application&) = delete;
+	Application(Application&&) = delete;
 	~Application();
 
 	void run();
@@ -14,7 +17,10 @@ private:
 
 	void createNewScene(const UpdateFunc& updateFunc = nullptr);
 	void createMainMenu();
+	void createEditorScene();
 	void createTestLevel();
+
+	void createTexture(std::string&& name, std::string&& filepath);
 private:
 	Window m_window;
 	float m_deltaTime = 0.0f;
@@ -24,9 +30,12 @@ private:
 	std::unique_ptr<Shader> m_textureShader;
 	std::unique_ptr<Shader> m_shadowShader;
 	std::unique_ptr<Shader> m_uiShader;
-	std::unique_ptr<Texture> m_rat1Texture;
+
+	std::unordered_map<std::string, std::unique_ptr<Texture>> m_textures;
+
+	/*std::unique_ptr<Texture> m_rat1Texture;
 	std::unique_ptr<Texture> m_ratPlayerTexture;
 	std::unique_ptr<Texture> m_testBlockTexture;
 	std::unique_ptr<Texture> m_testBlock2Texture;
-	std::unique_ptr<Texture> m_testButtonTexture;
+	std::unique_ptr<Texture> m_testButtonTexture;*/
 };

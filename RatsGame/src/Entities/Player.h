@@ -23,6 +23,8 @@ class Player : public Rat
 {
 public:
 	Player(const SpriteData& spriteData, Window* windowPtr);
+	Player(const Player&) = delete;
+	Player(Player&&) = delete;
 	~Player() {}
 
 	void onUpdate(float deltaTime) override;

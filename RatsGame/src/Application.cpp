@@ -26,6 +26,13 @@ Application::Application()
     glEnable(GL_MULTISAMPLE);
 #endif
 
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+
+    ImGui_ImplGlfw_InitForOpenGL(m_window.getGlfwWindow(), true);
+    ImGui_ImplOpenGL3_Init();
+    ImGui::StyleColorsDark();
+
     m_textureShader = std::make_unique<Shader>("res/shaders/texture_shader.vert", "res/shaders/texture_shader.frag");
     m_shadowShader = std::make_unique<Shader>("res/shaders/shadow_shader.vert", "res/shaders/shadow_shader.frag");
     m_uiShader = std::make_unique<Shader>("res/shaders/ui_shader.vert", "res/shaders/ui_shader.frag");
@@ -41,11 +48,16 @@ Application::Application()
     m_uiShader->setUniform1iv("u_Textures", m_maxTextureUnits, samplers);
     delete[] samplers;
 
-    m_rat1Texture = std::make_unique<Texture>("res/textures/rat1.png");
+    createTexture("Rat1", "res/textures/rat1.png");
+    createTexture("Player", "res/textures/ratPlayer.png");
+    createTexture("TestBlock", "res/textures/testBlock.png");
+    createTexture("TestBlock2", "res/textures/testBlock2.png");
+    createTexture("TestButton", "res/textures/testButton.png");
+    /*m_rat1Texture = std::make_unique<Texture>("res/textures/rat1.png");
     m_ratPlayerTexture = std::make_unique<Texture>("res/textures/ratPlayer.png");
     m_testBlockTexture = std::make_unique<Texture>("res/textures/testBlock.png");
     m_testBlock2Texture = std::make_unique<Texture>("res/textures/testBlock2.png");
-    m_testButtonTexture = std::make_unique<Texture>("res/textures/testButton.png");
+    m_testButtonTexture = std::make_unique<Texture>("res/textures/testButton.png");*/
 
     createMainMenu();
 }
@@ -99,6 +111,10 @@ void Application::render()
 {
     m_window.clear();
 
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
     m_currentScene->onRender();
 
 #if DEBUG_LINES
@@ -111,6 +127,15 @@ void Application::render()
     }
 #endif
 
+    {
+        ImGui::Begin("Hello, world!");
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::End();
+    }
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
     m_window.display();
 }
 
@@ -119,7 +144,7 @@ void Application::createNewScene(const UpdateFunc& updateFunc)
     Scene::s_skip = true;
 
     delete m_currentScene;
-    m_currentScene = new Scene(&m_window, updateFunc, m_maxTextureUnits, m_textureShader.get(), m_shadowShader.get(), m_uiShader.get());
+    m_currentScene = new Scene(&m_window, m_textures, m_maxTextureUnits, m_textureShader.get(), m_shadowShader.get(), m_uiShader.get());
 }
 
 void Application::createMainMenu()
@@ -127,52 +152,43 @@ void Application::createMainMenu()
     createNewScene();
     
     //m_currentScene->createUISprite(Vec2f{ 200.0f, -100.0f }, Vec2f{ 150.0f, 50.0f }, m_testButtonTexture.get(), UISprite::Left | UISprite::Up);
-    ButtonPresses buttonPresses;
-    buttonPresses.onPress = []() {
+    ButtonPresses testLevelButtonPresses;
+    testLevelButtonPresses.onPress = []() {
         std::cout << "pressed\n";
     };
-    buttonPresses.onRelease = [this]() {
+    testLevelButtonPresses.onRelease = [this]() {
         std::cout << "released\n";
         createTestLevel();
     };
-    buttonPresses.onHoverOver = []() {
+    testLevelButtonPresses.onHoverOver = []() {
         std::cout << "hovered over\n";
     };
-    m_currentScene->createButton(Vec2f{ 0.0f, 0.0f }, Vec2f{ 150.0f, 50.0f }, m_testButtonTexture.get(), UISprite::Center, buttonPresses);
+    m_currentScene->createButton(Vec2f{ 0.0f, 0.0f }, Vec2f{ 150.0f, 50.0f }, m_textures.at("TestButton").get(), UISprite::Center, testLevelButtonPresses);
+
+    ButtonPresses editorLevelButtonPresses;
+    editorLevelButtonPresses.onRelease = [this]() {
+        createEditorScene();
+    };
+    m_currentScene->createButton(Vec2f{ 0.0f, 200.0f }, Vec2f{ 150.0f, 50.0f }, m_textures.at("TestButton").get(), UISprite::Center, editorLevelButtonPresses);
+}
+
+void Application::createEditorScene()
+{
+    Scene::s_skip = true;
+
+    delete m_currentScene;
+    m_currentScene = new EditorScene(&m_window, m_textures, m_maxTextureUnits, m_textureShader.get(), m_shadowShader.get(), m_uiShader.get());
 }
 
 void Application::createTestLevel()
 {
-    createNewScene([](float deltaTime) {
-        //std::cerr << (1.0f / deltaTime) << '\n';
-    });
+    Scene::s_skip = true;
 
-    m_currentScene->createLight(Light{ Vec3f{ 1.0f, 1.0f, 0.2f }, Vec2f{ -16.0f, 0.0f }, 0.1f, .50f });
-    m_currentScene->createLight(Light{ Vec3f{ 1.0f, 1.0f, 1.0f }, Vec2f{ -2.0f, 6.0f }, 0.1f, 3.0f });
-    m_currentScene->createLight(Light{ Vec3f{ 1.0f, 1.0f, 1.0f }, Vec2f{ 9.0f, 1.0f }, 0.02f, 3.0f });
-    m_currentScene->createLight(Light{ Vec3f{ 1.0f, 1.0f, 1.0f }, Vec2f{ 19.0f, 10.0f }, 0.1f, 2.0f });
-    m_currentScene->createLight(Light{ Vec3f{ 1.0f, 1.0f, 1.0f }, Vec2f{ -12.0f, 33.0f }, 0.1f, 2.0f });
-    m_currentScene->createLight(Light{ Vec3f{ 1.0f, 1.0f, 1.0f }, Vec2f{ 30.0f, 15.0f }, 0.1f, 2.0f });
-    m_currentScene->createLight(Light{ Vec3f{ 1.0f, 1.0f, 1.0f }, Vec2f{ 40.0f, 9.0f }, 0.1f, 2.0f });
-    m_currentScene->createLight(Light{ Vec3f{ 1.0f, 1.0f, 1.0f }, Vec2f{ -28.0f, -30.0f }, 0.1f, 2.0f });
-    m_currentScene->createLight(Light{ Vec3f{ 1.0f, 1.0f, 1.0f }, Vec2f{ 26.0f, -20.0f }, 0.1f, 2.0f });
+    delete m_currentScene;
+    m_currentScene = new Level1(&m_window, m_textures, m_maxTextureUnits, m_textureShader.get(), m_shadowShader.get(), m_uiShader.get());
+}
 
-    m_currentScene->createTextureSpriteBack(Vec2f{ 0.0f, 0.0f }, Vec2f{ 100.0f, 100.0f }, 0.0f, m_testBlockTexture.get());
-    m_currentScene->createTextureBlockBack(Vec2f{ 7.0f, 17.0f }, Vec2f{ 6.0f, 3.0f }, 0.0f, m_testBlock2Texture.get());
-    m_currentScene->createTextureBlockBack(Vec2f{ -12.0f, 12.0f }, Vec2f{ 1.0f, 2.0f }, 0.2f, m_testBlock2Texture.get());
-    m_currentScene->createTextureBlockBack(Vec2f{ 11.0f, 8.0f }, Vec2f{ 1.0f, 3.0f }, -0.1f, m_testBlock2Texture.get());
-    m_currentScene->createTextureBlockBack(Vec2f{ 11.0f, 3.0f }, Vec2f{ 1.0f, 3.0f }, 0.1f, m_testBlock2Texture.get());
-    m_currentScene->createTextureBlockBack(Vec2f{ -3.0f, -5.0f }, Vec2f{ 8.0f, 1.0f }, 0.0f, m_testBlock2Texture.get());
-    m_currentScene->createPlayer(Vec2f{ 0.0f, 0.0f }, m_ratPlayerTexture.get());
-    auto rat1 = m_currentScene->createEnemyRatSniffer(Vec2f{ -15.0f, 9.0f }, Vec2f{ 3.0f, 1.5f }, 0.0f, m_ratPlayerTexture.get());
-    m_currentScene->addTargetPoint(rat1, Vec2f{ 20.0f, 0.0f });
-    m_currentScene->addTargetPoint(rat1, Vec2f{ 18.0f, 20.0f });
-    m_currentScene->addTargetPoint(rat1, Vec2f{ 6.0f, 6.0f });
-    m_currentScene->createEnemyRatSniffer(Vec2f{ -20.0f, 9.0f }, Vec2f{ 3.0f, 1.5f }, 0.0f, m_ratPlayerTexture.get());
-    m_currentScene->createEnemyRatSniffer(Vec2f{ 30.0f, -4.0f }, Vec2f{ 3.0f, 1.5f }, 0.0f, m_ratPlayerTexture.get());
-
-    //for (float i = 0.0f; i < 10.0f; i++)
-    //{
-    //    m_currentScene->createEnemyRatSniffer(Vec2f{ 20.0f, 0.0f + i }, Vec2f{ 3.0f, 1.5f }, 0.0f, m_ratPlayerTexture.get());
-    //}
+void Application::createTexture(std::string&& name, std::string&& filepath)
+{
+    m_textures.insert({ name, std::make_unique<Texture>(filepath) });
 }

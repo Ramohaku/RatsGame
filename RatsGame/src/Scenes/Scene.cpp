@@ -2,10 +2,12 @@
 #include "Scene.h"
 #include "Debug.h"
 
-bool Scene::s_skip = false;
+using json = nlohmann::json;
 
-Scene::Scene(Window* window, const UpdateFunc& updateFunc, GLint maxTextureUnits, Shader* textureShader, Shader* shadowShader, Shader* uiShader)
-    : m_window(window), m_updateFunc(updateFunc),
+bool Scene::s_skip = false;
+ 
+Scene::Scene(Window* window, std::unordered_map<std::string, std::unique_ptr<Texture>>& textures,/* const UpdateFunc& updateFunc,*/ GLint maxTextureUnits, Shader* textureShader, Shader* shadowShader, Shader* uiShader)
+    : m_window(window), m_textures(textures), //m_updateFunc(updateFunc),
     m_maxTextureUnits(maxTextureUnits),
     m_textureShader(textureShader), m_shadowShader(shadowShader), m_uiShader(uiShader)
 {
@@ -79,8 +81,8 @@ void Scene::onUpdate(float deltaTime)
         }
     }
 
-    if (m_updateFunc)
-        m_updateFunc(deltaTime);
+    //if (m_updateFunc)
+    //    m_updateFunc(deltaTime);
 
     //static float rotation = 0.0f;
     //rotation += 0.1 * deltaTime;
@@ -95,33 +97,7 @@ void Scene::onUpdate(float deltaTime)
     if (m_player)
         m_window->setCenter(m_player->getCenter());
 
-    std::vector<Vec4f> lightsColors;
-    std::vector<Vec4f> lightsData;
-    for (const auto& light : m_lights)
-    {
-        lightsColors.push_back(Vec4f{ light.color.r, light.color.g, light.color.b, static_cast<float>(light.active) });
-        lightsData.push_back(Vec4f{ light.center.x, light.center.y, light.vanish, light.distance });
-    }
-
-    for (auto& shadowSprite : m_shadowSpritesMiddle)
-        shadowSprite->updateLights(lightsData);
-
-    for (auto& shadowSprite : m_shadowSpritesFront)
-        shadowSprite->updateLights(lightsData);
-
-    const glm::mat4 mvp = m_window->getProj() * m_window->getView();
-    const int lightsCount = lightsColors.size();
-
-    m_textureShader->bind();
-    m_textureShader->setUniformMat4f("u_MVP", mvp);
-    m_textureShader->setUniform1i("u_LightsCount", lightsCount);
-    m_textureShader->setUniform4fv("u_LightsColors", lightsCount, lightsColors.data());
-    m_textureShader->setUniform4fv("u_LightsData", lightsCount, lightsData.data());
-
-    m_shadowShader->bind();
-    m_shadowShader->setUniformMat4f("u_MVP", mvp);
-    m_shadowShader->setUniform1i("u_LightsCount", lightsCount);
-    m_shadowShader->setUniform4fv("u_LightsData", lightsCount, lightsData.data());
+    updateLights();
 }
 
 void Scene::onRender()
@@ -180,7 +156,6 @@ TextureSprite* Scene::createTextureBlockBack(const Vec2f& center, const Vec2f& h
     spriteData.halfSize = halfSize;
     spriteData.rotation = rotation;
     spriteData.texturePtr = texture;
-    spriteData.blocking = true;
 
     auto entity = std::make_unique<TextureSprite>(spriteData);
     auto* ePtr = entity.get();
@@ -266,6 +241,194 @@ Button* Scene::createButton(const Vec2f& center, const Vec2f& halfSize, Texture*
 void Scene::addTargetPoint(EnemyRatSniffer* rat, const Vec2f& point)
 {
     rat->addTargetPoint(point);
+}
+
+void Scene::updateLights()
+{
+    std::vector<Vec4f> lightsColors;
+    std::vector<Vec4f> lightsData;
+    for (const auto& light : m_lights)
+    {
+        lightsColors.push_back(Vec4f{ light.color.r, light.color.g, light.color.b, static_cast<float>(light.active) });
+        lightsData.push_back(Vec4f{ light.center.x, light.center.y, light.vanish, light.distance });
+    }
+
+    for (auto& shadowSprite : m_shadowSpritesMiddle)
+        shadowSprite->updateLights(lightsData);
+
+    for (auto& shadowSprite : m_shadowSpritesFront)
+        shadowSprite->updateLights(lightsData);
+
+    const glm::mat4 mvp = m_window->getProj() * m_window->getView();
+    const int lightsCount = lightsColors.size();
+
+    m_textureShader->bind();
+    m_textureShader->setUniformMat4f("u_MVP", mvp);
+    m_textureShader->setUniform1i("u_LightsCount", lightsCount);
+    m_textureShader->setUniform4fv("u_LightsColors", lightsCount, lightsColors.data());
+    m_textureShader->setUniform4fv("u_LightsData", lightsCount, lightsData.data());
+
+    m_shadowShader->bind();
+    m_shadowShader->setUniformMat4f("u_MVP", mvp);
+    m_shadowShader->setUniform1i("u_LightsCount", lightsCount);
+    m_shadowShader->setUniform4fv("u_LightsData", lightsCount, lightsData.data());
+}
+
+void Scene::loadEntities(const char* fileName)
+{
+    std::ifstream file(fileName);
+    if (file)
+    {
+        json j;
+        file >> j;
+
+        const auto& lightsData = j["sceneData"]["lights"].get<std::vector<json>>();
+        const auto& entitiesData = j["sceneData"]["entities"].get<std::vector<json>>();
+
+        for (const auto& data : lightsData)
+        {
+            Light light;
+            light.color.r = data["color"]["r"].get<double, float>();
+            light.color.g = data["color"]["g"].get<double, float>();
+            light.color.b = data["color"]["b"].get<double, float>();
+            light.center.x = data["center"]["x"].get<double, float>();
+            light.center.y = data["center"]["y"].get<double, float>();
+            light.vanish = data["vanish"].get<double, float>();
+            light.distance = data["distance"].get<double, float>();
+            light.active = data["active"].get<bool>();
+            m_lights.push_back(light);
+        }
+
+        for (const auto& data : entitiesData)
+        {
+            SpriteData spriteData;
+            spriteData.center.x = data["center"]["x"].get<double, float>();
+            spriteData.center.y = data["center"]["y"].get<double, float>();
+            spriteData.halfSize.x = data["halfSize"]["x"].get<double, float>();
+            spriteData.halfSize.y = data["halfSize"]["y"].get<double, float>();
+            spriteData.rotation = data["rotation"].get<double, float>();
+            spriteData.texturePtr = m_textures.at(data["textureName"].get<std::string>()).get();
+            spriteData.texPartScale.x = data["texPartScale"]["x"].get<double, float>();
+            spriteData.texPartScale.y = data["texPartScale"]["y"].get<double, float>();
+            spriteData.texPartIndex.x = data["texPartIndex"]["x"].get<double, float>();
+            spriteData.texPartIndex.y = data["texPartIndex"]["y"].get<double, float>();
+            spriteData.flipHorizontal = data["flipHorizontal"].get<double, float>();
+            spriteData.flipVertical = data["flipVertical"].get<double, float>();
+
+            //std::unique_ptr<TextureSprite> sprite;
+
+            bool shadows = data["shadows"].get<bool>();
+            bool blocking = data["blocking"].get<bool>();
+
+            enum
+            {
+                ShadowSpriteT = 0, CharacterShadowT
+            } shadowType;
+
+            std::vector<std::unique_ptr<ShadowSprite>>* shadowSprites = nullptr;
+            std::vector<std::unique_ptr<TextureSprite>>* textureSprites = nullptr;
+            switch (data["layer"].get<int>())
+            {
+            case 0:
+                //m_textureSpritesBack.push_back(std::move(sprite));
+                textureSprites = &m_textureSpritesBack;
+                break;
+            case 1:
+                shadowSprites = &m_shadowSpritesMiddle;
+                textureSprites = &m_textureSpritesMiddle;
+                //if (shadows)
+                //{
+                //    switch (shadowType)
+                //    {
+                //    case ShadowSpriteT:
+                //        for (int i = 0; i < m_lights.size(); i++)
+                //            m_shadowSpritesMiddle.push_back(std::make_unique<ShadowSprite>(spriteData, spritePtr, i));
+                //        break;
+                //    case CharacterShadowT:
+                //        for (int i = 0; i < m_lights.size(); i++)
+                //            m_shadowSpritesMiddle.push_back(std::make_unique<CharacterShadow>(spriteData, i, reinterpret_cast<Character*>(spritePtr)));
+                //        break;
+                //    }
+                //}
+                //m_textureSpritesMiddle.push_back(std::move(sprite));
+                break;
+            case 2:
+                shadowSprites = &m_shadowSpritesFront;
+                textureSprites = &m_textureSpritesFront;
+                //if (shadows)
+                //{
+                //    switch (shadowType)
+                //    {
+                //    case ShadowSpriteT:
+                //        for (int i = 0; i < m_lights.size(); i++)
+                //            m_shadowSpritesFront.push_back(std::make_unique<ShadowSprite>(spriteData, spritePtr, i));
+                //        break;
+                //    case CharacterShadowT:
+                //        for (int i = 0; i < m_lights.size(); i++)
+                //            m_shadowSpritesFront.push_back(std::make_unique<CharacterShadow>(spriteData, i, reinterpret_cast<Character*>(spritePtr)));
+                //        break;
+                //    }
+                //}
+                //m_textureSpritesFront.push_back(std::move(sprite));
+                break;
+            }
+
+            const int entityType = data["entityType"].get<int>();
+            switch (entityType)
+            {
+            case 0:
+            {
+                auto sprite = std::make_unique<TextureSprite>(spriteData);
+                if (shadows)
+                    for (int i = 0; i < m_lights.size(); i++)
+                        shadowSprites->push_back(std::make_unique<ShadowSprite>(spriteData, sprite.get(), i));
+                if (blocking)
+                    EnemyRat::s_collidingSprites.push_back(sprite.get());
+                textureSprites->push_back(std::move(sprite));
+                break;
+            }
+            case 1:
+            {
+                auto sprite = std::make_unique<Player>(spriteData, m_window);
+                m_player = sprite.get();
+                if (shadows)
+                    for (int i = 0; i < m_lights.size(); i++)
+                        shadowSprites->push_back(std::make_unique<CharacterShadow>(spriteData, i, sprite.get()));
+                if (blocking)
+                    EnemyRat::s_collidingSprites.push_back(sprite.get());
+                textureSprites->push_back(std::move(sprite));
+                break;
+            }
+            case 2:
+            {
+                auto sprite = std::make_unique<EnemyRatGuard>(spriteData, m_player);
+                if (shadows)
+                    for (int i = 0; i < m_lights.size(); i++)
+                        shadowSprites->push_back(std::make_unique<CharacterShadow>(spriteData, i, sprite.get()));
+                if (blocking)
+                    EnemyRat::s_collidingSprites.push_back(sprite.get());
+                textureSprites->push_back(std::move(sprite));
+                break;
+            }
+            case 3:
+            {
+                auto sprite = std::make_unique<EnemyRatSniffer>(spriteData, m_player);
+                if (shadows)
+                    for (int i = 0; i < m_lights.size(); i++)
+                        shadowSprites->push_back(std::make_unique<CharacterShadow>(spriteData, i, sprite.get()));
+                if (blocking)
+                    EnemyRat::s_collidingSprites.push_back(sprite.get());
+                textureSprites->push_back(std::move(sprite));
+                break;
+            }
+            }
+        }
+        file.close();
+    }
+    else
+    {
+        ASSERT(false);
+    }
 }
 
 template<typename VertexType, typename SpriteType>

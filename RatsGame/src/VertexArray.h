@@ -42,6 +42,8 @@ class VertexArray
 {
 public:
     VertexArray(uint32_t vertexCount);
+    VertexArray(const VertexArray&) = default;
+    VertexArray(VertexArray&&) = default;
     ~VertexArray();
 
     void clear();

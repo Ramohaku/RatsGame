@@ -36,7 +36,7 @@ void Character::animate(const Animation& animation, float deltaTime)
 
 CharacterShadow::CharacterShadow(const SpriteData& spriteData, int lightIndex, Character* character)
 	: Character(spriteData),
-	ShadowSprite(spriteData, character, lightIndex),
+	ShadowSprite(spriteData, (Sprite*)character, lightIndex),
 	Sprite(spriteData),
 	m_character(character)
 {

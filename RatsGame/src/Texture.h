@@ -4,6 +4,8 @@ class Texture
 {
 public:
 	Texture(const std::string& path);
+	Texture(const Texture&) = default;
+	Texture(Texture&&) = default;
 	~Texture();
 
 	void bind(unsigned int slot = 0) const;

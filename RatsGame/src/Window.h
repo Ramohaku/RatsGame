@@ -9,6 +9,8 @@ class Window
 public:
 	Window(int width, int height, const char* title, float scale);
 	Window(const char* title, float scale, bool fullscreen);
+	Window(const Window&) = delete;
+	Window(Window&&) = delete;
 	~Window();
 
 	bool isOpen() const;

@@ -9,8 +9,18 @@ using UpdateFunc = std::function<void(float)>;
 
 class Scene
 {
+protected:
+	struct ExtraData
+	{
+		int entityType = 0;
+		std::string textureName;
+		bool shadows = true;
+		bool blocking = false;
+	};
 public:
-	Scene(Window* window, const UpdateFunc& updateFunc, GLint maxTextureUnits, Shader* textureShader, Shader* shadowShader, Shader* uiShader);
+	Scene(Window* window, std::unordered_map<std::string, std::unique_ptr<Texture>>& textures,/* const UpdateFunc& updateFunc,*/ GLint maxTextureUnits, Shader* textureShader, Shader* shadowShader, Shader* uiShader);
+	Scene(const Scene&) = delete;
+	Scene(Scene&&) = delete;
 	virtual ~Scene() {}
 
 	virtual void onUpdate(float deltaTime);
@@ -28,15 +38,20 @@ public:
 
 public:
 	static bool s_skip;
+protected:
+	void updateLights();
+	void loadEntities(const char* fileName);
 private:
 	template <typename VertexType, typename SpriteType>
 	void renderSprites(
 		std::vector<VertexArray<VertexType>>& vertexArrays,
 		std::vector<std::unique_ptr<SpriteType>>& sprites,
 		Shader* shader);
-private:
+protected:
 	Window* m_window;
-	UpdateFunc m_updateFunc = nullptr;
+	//UpdateFunc m_updateFunc = nullptr;
+
+	std::unordered_map<std::string, std::unique_ptr<Texture>>& m_textures;
 
 	const GLint m_maxTextureUnits;
 	Shader* m_textureShader;

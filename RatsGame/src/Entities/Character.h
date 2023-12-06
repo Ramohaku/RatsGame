@@ -12,6 +12,8 @@ class Character : virtual public Sprite
 {
 public:
 	Character(const SpriteData& spriteData);
+	Character(const Character&) = delete;
+	Character(Character&&) = delete;
 	virtual ~Character() {}
 
 	virtual void onUpdate(float deltaTime) override;
