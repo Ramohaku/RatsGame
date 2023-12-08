@@ -37,7 +37,7 @@ Scene::Scene(Window* window, std::unordered_map<std::string, std::unique_ptr<Tex
 
 void Scene::onUpdate(float deltaTime)
 {
-    if (m_lights.size() > 0)
+    /*if (m_lights.size() > 0)
     {
         static float time = 0.0f;
         time += deltaTime;
@@ -46,7 +46,7 @@ void Scene::onUpdate(float deltaTime)
             time = 0.0f;
             m_lights[1].active = !m_lights[1].active;
         }
-    }
+    }*/
 
     for (auto& sprite : m_textureSpritesBack)
         sprite->onUpdate(deltaTime);
