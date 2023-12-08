@@ -2,7 +2,7 @@
 
 #include "Utils.h"
 
-#define ENABLE_ANTIALIASING 1
+#define ENABLE_ANTIALIASING 0
 
 class Window
 {

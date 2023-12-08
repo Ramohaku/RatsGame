@@ -256,7 +256,7 @@ void EditorScene::onRender()
 			}
 			j["sceneData"]["entities"] = entitiesArray;
 
-			file << j;
+			file << std::setw(4) << j;
 			file.close();
 		}
 		else

@@ -235,6 +235,8 @@
     <None Include="res\scenesData\level1.json" />
     <None Include="res\shaders\color_shader.frag" />
     <None Include="res\shaders\color_shader.vert" />
+    <None Include="res\shaders\screen_shader.frag" />
+    <None Include="res\shaders\screen_shader.vert" />
     <None Include="res\shaders\shadow_shader.frag" />
     <None Include="res\shaders\shadow_shader.vert" />
     <None Include="res\shaders\texture_shader.frag" />

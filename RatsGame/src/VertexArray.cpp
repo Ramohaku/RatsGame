@@ -136,6 +136,7 @@ void createIndices(std::array<uint32_t, MAX_INDEX_COUNT>& indices, const uint32_
 template class VertexArray<TextureVertex>;
 template class VertexArray<ShadowVertex>;
 template class VertexArray<UIVertex>;
+template class VertexArray<ScreenVertex>;
 
 void TextureVertex::createVertexAttribs(GLenum& vao)
 {
@@ -189,4 +190,13 @@ void UIVertex::createVertexAttribs(GLenum& vao)
 	
 	glEnableVertexArrayAttrib(vao, 2);
 	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(UIVertex), (const void*)offsetof(UIVertex, texID));
+}
+
+void ScreenVertex::createVertexAttribs(GLenum& vao)
+{
+	glEnableVertexArrayAttrib(vao, 0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (const void*)offsetof(ScreenVertex, pos));
+
+	glEnableVertexArrayAttrib(vao, 1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (const void*)offsetof(ScreenVertex, texCoords));
 }

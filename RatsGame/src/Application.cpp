@@ -69,13 +69,90 @@ Application::~Application()
 
 void Application::run()
 {
+    unsigned int framebuffer;
+    glGenFramebuffers(1, &framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+    // generate texture
+    unsigned int textureColorbuffer;
+    glGenTextures(1, &textureColorbuffer);
+    glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_window.getWidth(), m_window.getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    // attach it to currently bound framebuffer object
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+    
+    //unsigned int rbo;
+    //glGenRenderbuffers(1, &rbo);
+    //glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    //glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_window.getWidth(), m_window.getHeight());
+    //glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+    //glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        ASSERT(false);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    m_screenShader = std::make_unique<Shader>("res/shaders/screen_shader.vert", "res/shaders/screen_shader.frag");
+    m_screenVertexArray = std::make_unique<VertexArray<ScreenVertex>>(4);
+
+    ScreenVertex vertices[4] = {
+        { Vec2f{ -1.0f, -1.0f }, Vec2f{ 0.0f, 0.0f } },
+        { Vec2f{  1.0f, -1.0f }, Vec2f{ 1.0f, 0.0f } },
+        { Vec2f{  1.0f,  1.0f }, Vec2f{ 1.0f, 1.0f } },
+        { Vec2f{ -1.0f,  1.0f }, Vec2f{ 0.0f, 1.0f } },
+    };
+
     using namespace std::literals::chrono_literals;
     while (m_window.isOpen())
     {
         auto frameStartTime = std::chrono::high_resolution_clock::now();
 
         update();
+
+        m_window.clear();
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        // first pass
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // we're not using the stencil buffer now
+        glEnable(GL_DEPTH_TEST);
+
         render();
+
+        // second pass
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        m_screenShader->bind();
+        m_screenVertexArray->clear();
+        m_screenVertexArray->addGeometryPiece(vertices);
+        m_screenVertexArray->createSubData();
+        m_screenVertexArray->bind();
+        glDisable(GL_DEPTH_TEST);
+        glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+        //glDrawArrays(GL_TRIANGLES, 0, 6);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+        {
+            ImGui::Begin("Hello, world!");
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            ImGui::End();
+        }
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        m_window.display();
 
         glfwPollEvents();
 
@@ -109,11 +186,6 @@ void Application::update()
 
 void Application::render()
 {
-    m_window.clear();
-
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
 
     m_currentScene->onRender();
 
@@ -127,16 +199,6 @@ void Application::render()
     }
 #endif
 
-    {
-        ImGui::Begin("Hello, world!");
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-        ImGui::End();
-    }
-
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-    m_window.display();
 }
 
 void Application::createNewScene(const UpdateFunc& updateFunc)

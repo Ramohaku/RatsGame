@@ -33,9 +33,6 @@ private:
 
 	std::unordered_map<std::string, std::unique_ptr<Texture>> m_textures;
 
-	/*std::unique_ptr<Texture> m_rat1Texture;
-	std::unique_ptr<Texture> m_ratPlayerTexture;
-	std::unique_ptr<Texture> m_testBlockTexture;
-	std::unique_ptr<Texture> m_testBlock2Texture;
-	std::unique_ptr<Texture> m_testButtonTexture;*/
+	std::unique_ptr<Shader> m_screenShader;
+	std::unique_ptr<VertexArray<ScreenVertex>> m_screenVertexArray;
 };

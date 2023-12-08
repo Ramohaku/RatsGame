@@ -37,6 +37,14 @@ struct UIVertex
     static void createVertexAttribs(GLenum& vao);
 };
 
+struct ScreenVertex
+{
+    Vec2f pos;
+    Vec2f texCoords;
+
+    static void createVertexAttribs(GLenum& vao);
+};
+
 template<typename VertexType>
 class VertexArray
 {
