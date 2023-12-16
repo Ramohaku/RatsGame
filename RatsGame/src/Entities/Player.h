@@ -28,6 +28,9 @@ public:
 	~Player() {}
 
 	void onUpdate(float deltaTime) override;
+
+	inline void setLightStrength(float lightStrength) { m_lightStrength = lightStrength; }
+	inline float getLightStrength() const { return m_lightStrength; }
 private:
 	bool canMoveTo(const Vec2f& destPoint) const;
 	
@@ -43,4 +46,5 @@ private:
 	void moveToIfPossible(MoveDir moveDir, float deltaTime);
 private:
 	Window* m_windowPtr;
+	float m_lightStrength;
 };

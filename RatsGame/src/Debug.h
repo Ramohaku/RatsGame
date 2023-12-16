@@ -7,6 +7,12 @@
 
 #define ASSERT(x) if (!(x)) __debugbreak()
 
+#else
+
+#define ASSERT(x)
+
+#endif // _DEBUG
+
 
 namespace Debug {
 
@@ -31,12 +37,6 @@ namespace Debug {
         std::chrono::steady_clock::time_point m_startTime;
     };
 }
-
-#else
-
-#define ASSERT(x)
-
-#endif // _DEBUG
 
 class Line {
     int shaderProgram;

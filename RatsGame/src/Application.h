@@ -27,6 +27,10 @@ private:
 	Scene* m_currentScene = nullptr;
 	GLint m_maxTextureUnits = 0;
 
+	GLuint m_fbo = 0;
+	GLuint m_screenTexture = 0;
+	ScreenVertex m_screenVertices[4];
+
 	std::unique_ptr<Shader> m_textureShader;
 	std::unique_ptr<Shader> m_shadowShader;
 	std::unique_ptr<Shader> m_uiShader;

@@ -123,7 +123,7 @@ void Player::onUpdate(float deltaTime)
 */
 
 Player::Player(const SpriteData& spriteData, Window* windowPtr)
-	: Rat(spriteData, RatData{ 3.5f, 7.0f, 14.0f }),
+	: Rat(spriteData, RatData{ 3.5f, 7.0f, 16.0f }),
 	Sprite(spriteData),
 	m_windowPtr(windowPtr)
 {

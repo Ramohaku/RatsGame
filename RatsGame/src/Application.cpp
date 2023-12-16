@@ -4,7 +4,13 @@
 #include "VertexArray.h"
 
 Application::Application()
-	: m_window(/*1920, 1080,*/ "OpenGL Project", 0.03f, false)
+	: m_window(/*1920, 1080,*/ "OpenGL Project", 0.03f, false),
+    m_screenVertices{
+        { Vec2f{ -1.0f, -1.0f }, Vec2f{ 0.0f, 0.0f } },
+        { Vec2f{  1.0f, -1.0f }, Vec2f{ 1.0f, 0.0f } },
+        { Vec2f{  1.0f,  1.0f }, Vec2f{ 1.0f, 1.0f } },
+        { Vec2f{ -1.0f,  1.0f }, Vec2f{ 0.0f, 1.0f } },
+    }
 {
     if (glewInit() != GLEW_OK)
     {
@@ -59,32 +65,23 @@ Application::Application()
     m_testBlock2Texture = std::make_unique<Texture>("res/textures/testBlock2.png");
     m_testButtonTexture = std::make_unique<Texture>("res/textures/testButton.png");*/
 
-    createMainMenu();
-}
 
-Application::~Application()
-{
-    delete m_currentScene;
-}
-
-void Application::run()
-{
-    unsigned int framebuffer;
-    glGenFramebuffers(1, &framebuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glGenFramebuffers(1, &m_fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
     // generate texture
-    unsigned int textureColorbuffer;
-    glGenTextures(1, &textureColorbuffer);
-    glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+    glGenTextures(1, &m_screenTexture);
+    glBindTexture(GL_TEXTURE_2D, m_screenTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_window.getWidth(), m_window.getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glBindTexture(GL_TEXTURE_2D, 0);
 
     // attach it to currently bound framebuffer object
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
-    
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_screenTexture, 0);
+
     //unsigned int rbo;
     //glGenRenderbuffers(1, &rbo);
     //glBindRenderbuffer(GL_RENDERBUFFER, rbo);
@@ -100,59 +97,25 @@ void Application::run()
     m_screenShader = std::make_unique<Shader>("res/shaders/screen_shader.vert", "res/shaders/screen_shader.frag");
     m_screenVertexArray = std::make_unique<VertexArray<ScreenVertex>>(4);
 
-    ScreenVertex vertices[4] = {
-        { Vec2f{ -1.0f, -1.0f }, Vec2f{ 0.0f, 0.0f } },
-        { Vec2f{  1.0f, -1.0f }, Vec2f{ 1.0f, 0.0f } },
-        { Vec2f{  1.0f,  1.0f }, Vec2f{ 1.0f, 1.0f } },
-        { Vec2f{ -1.0f,  1.0f }, Vec2f{ 0.0f, 1.0f } },
-    };
 
+
+    createMainMenu();
+}
+
+Application::~Application()
+{
+    delete m_currentScene;
+}
+
+void Application::run()
+{
     using namespace std::literals::chrono_literals;
     while (m_window.isOpen())
     {
         auto frameStartTime = std::chrono::high_resolution_clock::now();
 
         update();
-
-        m_window.clear();
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        // first pass
-        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // we're not using the stencil buffer now
-        glEnable(GL_DEPTH_TEST);
-
         render();
-
-        // second pass
-        glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        m_screenShader->bind();
-        m_screenVertexArray->clear();
-        m_screenVertexArray->addGeometryPiece(vertices);
-        m_screenVertexArray->createSubData();
-        m_screenVertexArray->bind();
-        glDisable(GL_DEPTH_TEST);
-        glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
-        //glDrawArrays(GL_TRIANGLES, 0, 6);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
-        {
-            ImGui::Begin("Hello, world!");
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-            ImGui::End();
-        }
-
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        m_window.display();
 
         glfwPollEvents();
 
@@ -177,7 +140,7 @@ void Application::run()
 
 void Application::update()
 {
-#if DEBUG_LINES
+#if DEBUG_LINES_SNIFFER
     Line::s_debugLines.clear();
 #endif
 
@@ -186,10 +149,21 @@ void Application::update()
 
 void Application::render()
 {
+    m_window.clear();
+
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    // first pass
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // we're not using the stencil buffer now
+    glEnable(GL_DEPTH_TEST);
 
     m_currentScene->onRender();
 
-#if DEBUG_LINES
+#if DEBUG_LINES_SNIFFER
     for (auto& line : Line::s_debugLines)
     {
         const glm::mat4 mvp = m_window.getProj() * m_window.getView();
@@ -199,6 +173,31 @@ void Application::render()
     }
 #endif
 
+    // second pass
+    glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    m_screenShader->bind();
+    m_screenVertexArray->clear();
+    m_screenVertexArray->addGeometryPiece(m_screenVertices);
+    m_screenVertexArray->createSubData();
+    m_screenVertexArray->bind();
+    glDisable(GL_DEPTH_TEST);
+    glBindTexture(GL_TEXTURE_2D, m_screenTexture);
+    //glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+    {
+        ImGui::Begin("Hello, world!");
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::End();
+    }
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    m_window.display();
 }
 
 void Application::createNewScene(const UpdateFunc& updateFunc)

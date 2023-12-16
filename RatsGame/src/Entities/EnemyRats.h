@@ -2,7 +2,7 @@
 #include "Player.h"
 #include "Debug.h"
 
-#define DEBUG_LINES 0
+#define DEBUG_LINES_SNIFFER 0
 
 class EnemyRat : public Rat
 {
@@ -72,4 +72,15 @@ private:
 	size_t m_targetIndex = 0;
 	float m_nextIndexTime = 0.0f;
 	float m_nextIndexTimeMax = 10.0f;
+};
+
+class EnemyRatWatcher : public EnemyRat
+{
+public:
+	EnemyRatWatcher(const SpriteData& spriteData, Player* playerPtr);
+	EnemyRatWatcher(const EnemyRatWatcher&) = delete;
+	EnemyRatWatcher(EnemyRatWatcher&&) = delete;
+	~EnemyRatWatcher() {}
+
+	void managePlayer(float deltaTime, float dist, float angle) override;
 };

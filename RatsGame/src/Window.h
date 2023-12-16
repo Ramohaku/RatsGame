@@ -18,7 +18,7 @@ public:
 	void display();
 
 	void setCenter(const Vec2f& center);
-	inline void setScale(float scale) { m_scale = scale; }
+	void setScale(float scale);
 
 	inline GLFWwindow* getGlfwWindow() const { return m_glfwWindow; }
 	inline float getScale() const { return m_scale; }

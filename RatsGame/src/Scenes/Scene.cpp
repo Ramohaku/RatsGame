@@ -245,13 +245,24 @@ void Scene::addTargetPoint(EnemyRatSniffer* rat, const Vec2f& point)
 
 void Scene::updateLights()
 {
+    float lightStrength = 0.0f;
     std::vector<Vec4f> lightsColors;
     std::vector<Vec4f> lightsData;
     for (const auto& light : m_lights)
     {
         lightsColors.push_back(Vec4f{ light.color.r, light.color.g, light.color.b, static_cast<float>(light.active) });
         lightsData.push_back(Vec4f{ light.center.x, light.center.y, light.vanish, light.distance });
+
+        if (m_player)
+        {
+            const auto& center = m_player->getCenter();
+            const float d = hypot(light.center.x - m_player->getCenter().x, light.center.y - m_player->getCenter().y);
+            const float fn = std::clamp(light.distance / d - light.vanish, 0.0f, 3.0f);
+            lightStrength += fn;
+        }
     }
+    if (m_player)
+        m_player->setLightStrength(lightStrength);
 
     for (auto& shadowSprite : m_shadowSpritesMiddle)
         shadowSprite->updateLights(lightsData);
@@ -281,6 +292,9 @@ void Scene::loadEntities(const char* fileName)
     {
         json j;
         file >> j;
+
+        if (j["sceneData"].contains("windowScale"))
+            m_window->setScale(j["sceneData"]["windowScale"].get<double, float>());
 
         const auto& lightsData = j["sceneData"]["lights"].get<std::vector<json>>();
         const auto& entitiesData = j["sceneData"]["entities"].get<std::vector<json>>();

@@ -26,5 +26,6 @@ private:
 	std::vector<ExtraData> m_extraDataMiddle;
 	std::vector<ExtraData> m_extraDataFront;
 	const char* m_textureNames[4];
+	float m_windowScale = 0.03f;
 };
 

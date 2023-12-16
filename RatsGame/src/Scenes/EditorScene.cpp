@@ -76,6 +76,9 @@ void EditorScene::onRender()
 			json j;
 			file >> j;
 
+			if (j["sceneData"].contains("windowScale"))
+				m_windowScale = j["sceneData"]["windowScale"].get<double, float>();
+
 			const auto& lightsData = j["sceneData"]["lights"].get<std::vector<json>>();
 			const auto& entitiesData = j["sceneData"]["entities"].get<std::vector<json>>();
 
@@ -255,6 +258,7 @@ void EditorScene::onRender()
 				i++;
 			}
 			j["sceneData"]["entities"] = entitiesArray;
+			j["sceneData"]["windowScale"] = m_windowScale;
 
 			file << std::setw(4) << j;
 			file.close();
@@ -263,7 +267,10 @@ void EditorScene::onRender()
 		{
 			std::cerr << "could not create file " << fileName << '\n';
 		}
+
 	}
+	ImGui::SliderFloat("Window scale", &m_windowScale, 0.0f, 0.1f);
+	m_window->setScale(m_windowScale);
 
 	ImGui::End();
 }

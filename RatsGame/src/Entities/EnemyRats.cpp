@@ -68,7 +68,10 @@ void EnemyRatGuard::managePlayer(float deltaTime, float dist, float angle)
 		if (m_alarmTime > 0.0f)
 			m_alarmTime = std::max(m_alarmTime - deltaTime * 0.2f, 0.0f);
 		else
+		{
+			m_moveMode = MoveMode::Stand;
 			m_moving = false;
+		}
 	}
 }
 
@@ -85,7 +88,7 @@ void EnemyRatSniffer::onUpdate(float deltaTime)
 
 void EnemyRatSniffer::managePlayer(float deltaTime, float dist, float angle)
 {
-	if (dist < 16.0f || m_alarmTime > 0.0f)
+	if (dist < 21.0f || m_alarmTime > 0.0f)
 		updateRaysForPlayer(deltaTime, dist, angle); // follow the player
 	else
 	{
@@ -102,6 +105,11 @@ void EnemyRatSniffer::managePlayer(float deltaTime, float dist, float angle)
 				m_targetIndex = (m_targetIndex + 1) % m_targetPoints.size();
 				m_nextIndexTime = 0.0f;
 			}
+		}
+		else
+		{
+			m_moving = false;
+			m_moveMode = MoveMode::Stand;
 		}
 	}
 
@@ -151,10 +159,10 @@ void EnemyRatSniffer::updateRaysForPlayer(float deltaTime, float dist, float ang
 		}
 		else
 		{
-			m_moveMode = dist < 8.0f ? MoveMode::Run : MoveMode::Walk;
+			m_moveMode = dist < 11.5f ? MoveMode::Run : MoveMode::Walk;
 		}
 
-		if (dist < 8.5f)
+		if (dist < 11.5f)
 		{
 			m_alarmTime = m_alarmTimeMax;
 		}
@@ -167,7 +175,7 @@ void EnemyRatSniffer::updateRaysForPlayer(float deltaTime, float dist, float ang
 	//	m_rayLength = 10.0f;
 	//}
 
-#if DEBUG_LINES
+#if DEBUG_LINES_SNIFFER
 	for (int i = 0; i < COL_RAYS + 1; i++)
 	{
 		Line::s_debugLines[i].setColor(glm::vec3{ m_moveWeights[i] / 2.0f, 0.3f, 0.3f });
@@ -199,7 +207,7 @@ void EnemyRatSniffer::updateRaysForTarget(float deltaTime, float dist, float ang
 		//m_rayLength = 10.0f;
 	}
 
-#if DEBUG_LINES
+#if DEBUG_LINES_SNIFFER
 	for (int i = 0; i < COL_RAYS + 1; i++)
 	{
 		Line::s_debugLines[i].setColor(glm::vec3{ m_moveWeights[i] / 2.0f, 0.3f, 0.3f });
@@ -224,7 +232,7 @@ void EnemyRatSniffer::updateCollisions(int startIndex, int endIndex)
 			const auto intersection1 = getIntersection(m_spriteData.center, m_collisionRays[i], edgeArray[minIndex].pos, edgeArray[(minIndex + 1) % edgeArray.size()].pos);
 			const auto intersection2 = getIntersection(m_spriteData.center, m_collisionRays[i], edgeArray[minIndex].pos, edgeArray[(minIndex - 1) % edgeArray.size()].pos);
 
-#if DEBUG_LINES
+#if DEBUG_LINES_SNIFFER
 			Line::s_debugLines.emplace_back(glm::vec3{ edgeArray[minIndex].pos.x, edgeArray[minIndex].pos.y, 0.0f }, glm::vec3{ edgeArray[(minIndex + 1) % edgeArray.size()].pos.x, edgeArray[(minIndex + 1) % edgeArray.size()].pos.y, 0.0f });
 			Line::s_debugLines.emplace_back(glm::vec3{ edgeArray[minIndex].pos.x, edgeArray[minIndex].pos.y, 0.0f }, glm::vec3{ edgeArray[(minIndex - 1) % edgeArray.size()].pos.x, edgeArray[(minIndex - 1) % edgeArray.size()].pos.y, 0.0f });
 #endif
@@ -253,7 +261,7 @@ void EnemyRatSniffer::updateTargetCollisionRay(float deltaTime, float angle)
 	m_collisionRays[COL_RAYS].y = m_spriteData.center.y + m_rayLength * sin(angle);
 	m_moveWeights[COL_RAYS] = 2.1f;
 
-#if DEBUG_LINES
+#if DEBUG_LINES_SNIFFER
 	Line::s_debugLines.emplace_back(glm::vec3{ m_spriteData.center.x, m_spriteData.center.y, 0.0f }, glm::vec3{ m_collisionRays[COL_RAYS].x, m_collisionRays[COL_RAYS].y, 0.0f });
 #endif
 
@@ -277,7 +285,7 @@ bool EnemyRatSniffer::updateCollisionRays(float deltaTime)
 		m_moveWeights[i] = 1.0f;
 		rayAngle += step;
 
-#if DEBUG_LINES
+#if DEBUG_LINES_SNIFFER
 		Line::s_debugLines.emplace_back(glm::vec3{ m_spriteData.center.x, m_spriteData.center.y, 0.0f }, glm::vec3{ m_collisionRays[i].x, m_collisionRays[i].y, 0.0f });
 #endif
 	}
@@ -300,7 +308,7 @@ void EnemyRatSniffer::updateMoveWeights(float deltaTime, float angle)
 	for (int i = 0; i < COL_RAYS / 4.0f + 1; i++)
 	{
 		m_moveWeights[(index - i) % COL_RAYS] *= 2.0f - static_cast<float>(i) * 0.4f;
-}
+	}
 	m_moveWeights[index] *= 2.0f;
 	for (int i = 0; i < COL_RAYS / 4.0f + 1; i++)
 	{

@@ -105,3 +105,12 @@ void Window::setCenter(const Vec2f& center)
         static_cast<float>(m_height) * m_scale / 2.0f - center.y,
     0.0f));
 }
+
+void Window::setScale(float scale)
+{
+    m_scale = scale;
+    m_proj = glm::ortho(0.0f,
+        static_cast<float>(m_width) * scale, 0.0f,
+        static_cast<float>(m_height) * scale, -1.0f, 1.0f
+    );
+}
