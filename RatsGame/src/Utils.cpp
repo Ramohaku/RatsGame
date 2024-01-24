@@ -46,7 +46,7 @@ size_t findClosest(const std::array<float, COL_RAYS>& arr, float target)
 	if (target >= arr.back())
 		return arr.size() - 1;
 
-	size_t i = 0, j = arr.size(), mid = 0;
+	int i = 0, j = arr.size(), mid = 0;
 	while (i < j)
 	{
 		mid = (i + j) / 2;

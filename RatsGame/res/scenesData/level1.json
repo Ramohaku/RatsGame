@@ -15,6 +15,7 @@
                     "y": 200.0
                 },
                 "layer": 0,
+                "name": "",
                 "rotation": 0.0,
                 "shadows": false,
                 "texPartIndex": {
@@ -30,7 +31,7 @@
             {
                 "blocking": true,
                 "center": {
-                    "x": -1.0,
+                    "x": -18.0,
                     "y": -12.100000381469727
                 },
                 "entityType": 0,
@@ -41,6 +42,7 @@
                     "y": 2.0
                 },
                 "layer": 1,
+                "name": "",
                 "rotation": 0.0,
                 "shadows": true,
                 "texPartIndex": {
@@ -67,6 +69,7 @@
                     "y": 14.699999809265137
                 },
                 "layer": 1,
+                "name": "",
                 "rotation": 0.0,
                 "shadows": true,
                 "texPartIndex": {
@@ -93,6 +96,7 @@
                     "y": 11.0
                 },
                 "layer": 1,
+                "name": "",
                 "rotation": 0.0,
                 "shadows": true,
                 "texPartIndex": {
@@ -108,17 +112,18 @@
             {
                 "blocking": true,
                 "center": {
-                    "x": -4.300000190734863,
-                    "y": 3.9000000953674316
+                    "x": 4.900000095367432,
+                    "y": 3.0999999046325684
                 },
                 "entityType": 0,
                 "flipHorizontal": 1.0,
                 "flipVertical": 1.0,
                 "halfSize": {
-                    "x": 10.300000190734863,
+                    "x": 7.599999904632568,
                     "y": 2.0
                 },
                 "layer": 1,
+                "name": "",
                 "rotation": 0.0,
                 "shadows": true,
                 "texPartIndex": {
@@ -134,8 +139,8 @@
             {
                 "blocking": false,
                 "center": {
-                    "x": 4.358852386474609,
-                    "y": -8.263999938964844
+                    "x": -3.5266265869140625,
+                    "y": 3.567737340927124
                 },
                 "entityType": 1,
                 "flipHorizontal": 1.0,
@@ -145,7 +150,8 @@
                     "y": 1.0
                 },
                 "layer": 2,
-                "rotation": 3.141592025756836,
+                "name": "",
+                "rotation": -1.5707967281341553,
                 "shadows": true,
                 "texPartIndex": {
                     "x": 1.0,
@@ -161,9 +167,9 @@
                 "blocking": true,
                 "center": {
                     "x": 3.5,
-                    "y": -16.200000762939453
+                    "y": -20.200000762939453
                 },
-                "entityType": 3,
+                "entityType": 2,
                 "flipHorizontal": 1.0,
                 "flipVertical": 1.0,
                 "halfSize": {
@@ -171,32 +177,7 @@
                     "y": 1.5
                 },
                 "layer": 2,
-                "rotation": 0.0,
-                "shadows": true,
-                "texPartIndex": {
-                    "x": 1.0,
-                    "y": 9.0
-                },
-                "texPartScale": {
-                    "x": 0.5,
-                    "y": 0.10000000149011612
-                },
-                "textureName": "Player"
-            },
-            {
-                "blocking": true,
-                "center": {
-                    "x": -24.899999618530273,
-                    "y": -2.200000047683716
-                },
-                "entityType": 3,
-                "flipHorizontal": 1.0,
-                "flipVertical": 1.0,
-                "halfSize": {
-                    "x": 3.0,
-                    "y": 1.5
-                },
-                "layer": 2,
+                "name": "rat1",
                 "rotation": 0.0,
                 "shadows": true,
                 "texPartIndex": {
@@ -268,6 +249,6 @@
                 "vanish": 0.0430000014603138
             }
         ],
-        "windowScale": 0.0430000014603138
+        "windowScale": 0.023000000044703484
     }
 }

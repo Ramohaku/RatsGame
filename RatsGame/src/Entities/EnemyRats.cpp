@@ -3,9 +3,9 @@
 #include "EdgeArray.h"
 
 EnemyRat::EnemyRat(const SpriteData& spriteData, const RatData& ratData,
-	float sightDist, Player* playerPtr)
+	Player* playerPtr)
 	: Rat(spriteData, ratData),
-	m_sightDist(sightDist), m_playerPtr(playerPtr),
+	m_playerPtr(playerPtr),
 	Sprite(spriteData)
 {
 }
@@ -33,8 +33,11 @@ void EnemyRat::onUpdate(float deltaTime)
 
 	const Vec2f playerCenter = m_playerPtr->getCenter();
 
-	dx = playerCenter.x - m_spriteData.center.x;
-	dy = playerCenter.y - m_spriteData.center.y;
+	// the distance between the center and the head is equal to m_spriteData.halfSize.x
+	m_headCenter.x = m_spriteData.center.x + m_spriteData.halfSize.x * cos(m_spriteData.rotation);
+	m_headCenter.y = m_spriteData.center.y - m_spriteData.halfSize.x * sin(m_spriteData.rotation);
+	dx = playerCenter.x - m_headCenter.x;
+	dy = playerCenter.y - m_headCenter.y;
 	dist = hypot(dx, dy);
 	angle = atan2(dy, dx);
 
@@ -43,103 +46,16 @@ void EnemyRat::onUpdate(float deltaTime)
 	Rat::onUpdate(deltaTime);
 }
 
-EnemyRatGuard::EnemyRatGuard(const SpriteData& spriteData, Player* playerPtr)
-	: EnemyRat(spriteData, RatData{ 3.5f, 7.0f, 12.0f }, 10.0f, playerPtr),
-	Sprite(spriteData)
-{
-}
-
-void EnemyRatGuard::managePlayer(float deltaTime, float dist, float angle)
-{
-	if (dist < m_sightDist)
-	{
-		m_destPoint = m_playerPtr->getCenter();
-		m_destRotation = -angle;
-		m_moveMode = MoveMode::Run;
-		if (m_alarmTime < 1.0f)
-			m_alarmTime += deltaTime;
-		else
-			m_moving = true;
-	}
-	else
-	{
-		m_moveMode = MoveMode::Stand;
-		m_spriteData.texPartIndex.x = 0.0f;
-		if (m_alarmTime > 0.0f)
-			m_alarmTime = std::max(m_alarmTime - deltaTime * 0.2f, 0.0f);
-		else
-		{
-			m_moveMode = MoveMode::Stand;
-			m_moving = false;
-		}
-	}
-}
-
-EnemyRatSniffer::EnemyRatSniffer(const SpriteData& spriteData, Player* playerPtr)
-	: EnemyRat(spriteData, RatData{ 3.5f, 7.0f, 13.0f }, 10.0f, playerPtr),
-	Sprite(spriteData)
-{
-}
-
-void EnemyRatSniffer::onUpdate(float deltaTime)
-{
-	EnemyRat::onUpdate(deltaTime);
-}
-
-void EnemyRatSniffer::managePlayer(float deltaTime, float dist, float angle)
-{
-	if (dist < 21.0f || m_alarmTime > 0.0f)
-		updateRaysForPlayer(deltaTime, dist, angle); // follow the player
-	else
-	{
-		if (!m_targetPoints.empty())
-		{
-			const float dx = m_targetPoints[m_targetIndex].x - m_spriteData.center.x;
-			const float dy = m_targetPoints[m_targetIndex].y - m_spriteData.center.y;
-			const float targetDist = hypot(dx, dy);
-			const float targetAngle = atan2(dy, dx);
-			updateRaysForTarget(deltaTime, targetDist, targetAngle);
-			m_nextIndexTime += deltaTime;
-			if (m_nextIndexTime > m_nextIndexTimeMax)
-			{
-				m_targetIndex = (m_targetIndex + 1) % m_targetPoints.size();
-				m_nextIndexTime = 0.0f;
-			}
-		}
-		else
-		{
-			m_moving = false;
-			m_moveMode = MoveMode::Stand;
-		}
-	}
-
-	if (m_moveWeights[COL_RAYS] > 2.0f) // rat can run directly the target
-	{
-		m_colTimeMax = 0.5f;
-		m_rayLength = 10.0f;
-		m_destPoint = m_collisionRays[COL_RAYS];
-	}
-	else
-	{
-		if (m_colTimeMax < 0.5f)
-			m_colTimeMax = 0.5f;
-		else
-			m_colTimeMax += 0.05f * deltaTime;
-		m_rayLength += 0.2f * deltaTime;
-
-		const auto index = std::distance(m_moveWeights.begin(), std::max_element(m_moveWeights.begin(), m_moveWeights.end()));
-		if (m_moveWeights[index] > 0.1f)
-			m_destPoint = m_collisionRays[index];
-	}
-}
-
-void EnemyRatSniffer::addTargetPoint(const Vec2f& point)
+void EnemyRat::addTargetPoint(const Vec2f& point)
 {
 	m_targetPoints.push_back(point);
 }
 
-void EnemyRatSniffer::updateRaysForPlayer(float deltaTime, float dist, float angle)
+void EnemyRat::updateRaysForPlayer(float deltaTime, float dist, float angle)
 {
+	m_playerFollowing = true;
+	m_playerLostGo = false;
+
 	updateTargetCollisionRay(deltaTime, angle);
 
 	if (!updateCollisionRays(deltaTime))
@@ -147,35 +63,12 @@ void EnemyRatSniffer::updateRaysForPlayer(float deltaTime, float dist, float ang
 
 	updateCollisions(0, COL_RAYS - 1);
 	
+	updateMoveWeights(deltaTime, angle);
 
-	//if (/*dist < 14.0f || m_alarmTime > 0.0f*/)
-	{
-		updateMoveWeights(deltaTime, angle);
+	// call the virtual function that decides what to do when player is near
+	updateNearPlayer(deltaTime, dist, angle);
 
-		if (m_alarmTime > 0.0f)
-		{
-			m_alarmTime -= m_colTimeMax;
-			m_moveMode = MoveMode::Run;
-		}
-		else
-		{
-			m_moveMode = dist < 11.5f ? MoveMode::Run : MoveMode::Walk;
-		}
-
-		if (dist < 11.5f)
-		{
-			m_alarmTime = m_alarmTimeMax;
-		}
-	}
-	//else
-	//{
-	//	m_moving = false;
-	//	m_moveMode = MoveMode::Stand;
-	//	m_colTimeMax = 0.5f;
-	//	m_rayLength = 10.0f;
-	//}
-
-#if DEBUG_LINES_SNIFFER
+#if DEBUG_LINES
 	for (int i = 0; i < COL_RAYS + 1; i++)
 	{
 		Line::s_debugLines[i].setColor(glm::vec3{ m_moveWeights[i] / 2.0f, 0.3f, 0.3f });
@@ -183,7 +76,7 @@ void EnemyRatSniffer::updateRaysForPlayer(float deltaTime, float dist, float ang
 #endif
 }
 
-void EnemyRatSniffer::updateRaysForTarget(float deltaTime, float dist, float angle)
+void EnemyRat::updateRaysForTarget(float deltaTime, float dist, float angle)
 {
 	updateTargetCollisionRay(deltaTime, angle);
 
@@ -207,7 +100,7 @@ void EnemyRatSniffer::updateRaysForTarget(float deltaTime, float dist, float ang
 		//m_rayLength = 10.0f;
 	}
 
-#if DEBUG_LINES_SNIFFER
+#if DEBUG_LINES
 	for (int i = 0; i < COL_RAYS + 1; i++)
 	{
 		Line::s_debugLines[i].setColor(glm::vec3{ m_moveWeights[i] / 2.0f, 0.3f, 0.3f });
@@ -215,7 +108,7 @@ void EnemyRatSniffer::updateRaysForTarget(float deltaTime, float dist, float ang
 #endif
 }
 
-void EnemyRatSniffer::updateCollisions(int startIndex, int endIndex)
+void EnemyRat::updateCollisions(int startIndex, int endIndex)
 {
 	for (Sprite* sprite : s_collidingSprites)
 	{
@@ -232,7 +125,7 @@ void EnemyRatSniffer::updateCollisions(int startIndex, int endIndex)
 			const auto intersection1 = getIntersection(m_spriteData.center, m_collisionRays[i], edgeArray[minIndex].pos, edgeArray[(minIndex + 1) % edgeArray.size()].pos);
 			const auto intersection2 = getIntersection(m_spriteData.center, m_collisionRays[i], edgeArray[minIndex].pos, edgeArray[(minIndex - 1) % edgeArray.size()].pos);
 
-#if DEBUG_LINES_SNIFFER
+#if DEBUG_LINES
 			Line::s_debugLines.emplace_back(glm::vec3{ edgeArray[minIndex].pos.x, edgeArray[minIndex].pos.y, 0.0f }, glm::vec3{ edgeArray[(minIndex + 1) % edgeArray.size()].pos.x, edgeArray[(minIndex + 1) % edgeArray.size()].pos.y, 0.0f });
 			Line::s_debugLines.emplace_back(glm::vec3{ edgeArray[minIndex].pos.x, edgeArray[minIndex].pos.y, 0.0f }, glm::vec3{ edgeArray[(minIndex - 1) % edgeArray.size()].pos.x, edgeArray[(minIndex - 1) % edgeArray.size()].pos.y, 0.0f });
 #endif
@@ -249,7 +142,7 @@ void EnemyRatSniffer::updateCollisions(int startIndex, int endIndex)
 	}
 }
 
-void EnemyRatSniffer::updateTargetCollisionRay(float deltaTime, float angle)
+void EnemyRat::updateTargetCollisionRay(float deltaTime, float angle)
 {
 	m_colTimeP += deltaTime;
 	if (m_colTimeP < m_colTimeMaxP)
@@ -261,14 +154,14 @@ void EnemyRatSniffer::updateTargetCollisionRay(float deltaTime, float angle)
 	m_collisionRays[COL_RAYS].y = m_spriteData.center.y + m_rayLength * sin(angle);
 	m_moveWeights[COL_RAYS] = 2.1f;
 
-#if DEBUG_LINES_SNIFFER
+#if DEBUG_LINES
 	Line::s_debugLines.emplace_back(glm::vec3{ m_spriteData.center.x, m_spriteData.center.y, 0.0f }, glm::vec3{ m_collisionRays[COL_RAYS].x, m_collisionRays[COL_RAYS].y, 0.0f });
 #endif
 
 	updateCollisions(COL_RAYS, COL_RAYS);
 }
 
-bool EnemyRatSniffer::updateCollisionRays(float deltaTime)
+bool EnemyRat::updateCollisionRays(float deltaTime)
 {
 	m_colTime += deltaTime;
 	if (m_colTime < m_colTimeMax)
@@ -285,7 +178,7 @@ bool EnemyRatSniffer::updateCollisionRays(float deltaTime)
 		m_moveWeights[i] = 1.0f;
 		rayAngle += step;
 
-#if DEBUG_LINES_SNIFFER
+#if DEBUG_LINES
 		Line::s_debugLines.emplace_back(glm::vec3{ m_spriteData.center.x, m_spriteData.center.y, 0.0f }, glm::vec3{ m_collisionRays[i].x, m_collisionRays[i].y, 0.0f });
 #endif
 	}
@@ -293,7 +186,7 @@ bool EnemyRatSniffer::updateCollisionRays(float deltaTime)
 	return true;
 }
 
-void EnemyRatSniffer::updateMoveWeights(float deltaTime, float angle)
+void EnemyRat::updateMoveWeights(float deltaTime, float angle)
 {
 	std::array<float, COL_RAYS> rayLines;
 	const float step = PI_F * 2.0f / static_cast<float>(COL_RAYS);
@@ -316,4 +209,201 @@ void EnemyRatSniffer::updateMoveWeights(float deltaTime, float angle)
 	}
 
 	m_moving = true;
+}
+
+void EnemyRat::updateTargets(float deltaTime)
+{
+	if (m_playerFollowing)
+	{
+		m_playerFollowing = false;
+		m_playerLostGo = true;
+		m_playerLostPos = m_playerPtr->getCenter();
+		//std::cerr << "following\n";
+		m_lostGoTime = 0.0f;
+	}
+	if (m_playerLostGo)
+	{
+		/*const float eyesX = m_spriteData.center.x + m_spriteData.halfSize.x * cos(m_spriteData.rotation);
+		const float eyesY = m_spriteData.center.y - m_spriteData.halfSize.y * sin(m_spriteData.rotation);
+		std::cerr << eyesX - m_spriteData.center.x << " " << eyesY - m_spriteData.center.y << '\n';
+		const float dx = m_playerLostPos.x - eyesX;
+		const float dy = m_playerLostPos.y - eyesY;
+		const float playerLostDist = hypot(dx, dy);
+		const float playerLostAngle = atan2(dy, dx);*/
+		const float dx = m_playerLostPos.x - m_spriteData.center.x;
+		const float dy = m_playerLostPos.y - m_spriteData.center.y;
+		const float playerLostDist = hypot(dx, dy);
+		const float playerLostAngle = atan2(dy, dx);
+		//std::cerr << playerLostDist << '\n';
+		if (playerLostDist < 2.0f)
+		{
+			m_playerLostGo = false;
+			m_moving = false;
+			m_moveMode = MoveMode::Stand;
+		}
+		else
+		{
+			updateRaysForTarget(deltaTime, playerLostDist, playerLostAngle);
+		}
+		//std::cerr << "lost go\n";
+
+		m_lostGoTime += deltaTime;
+		//std::cerr << m_lostGoTime << '\n';
+		if (m_lostGoTime > 8.2f)
+		{
+			m_playerLostGo = false;
+			m_moving = false;
+			m_moveMode = MoveMode::Stand;
+		}
+	}
+	else if (!m_targetPoints.empty())
+	{
+		const float dx = m_targetPoints[m_targetIndex].x - m_spriteData.center.x;
+		const float dy = m_targetPoints[m_targetIndex].y - m_spriteData.center.y;
+		const float targetDist = hypot(dx, dy);
+		const float targetAngle = atan2(dy, dx);
+		updateRaysForTarget(deltaTime, targetDist, targetAngle);
+		m_nextIndexTime += deltaTime;
+		if (m_nextIndexTime > m_nextIndexTimeMax)
+		{
+			m_targetIndex = (m_targetIndex + 1) % m_targetPoints.size();
+			m_nextIndexTime = 0.0f;
+		}
+	}
+	else
+	{
+		m_moving = false;
+		m_moveMode = MoveMode::Stand;
+		//std::cerr << "standing\n";
+	}
+}
+
+void EnemyRat::updateMoveToPlayer(float deltaTime)
+{
+	if (m_moveWeights[COL_RAYS] > 2.0f)
+	{
+		m_colTimeMax = 0.5f;
+		m_rayLength = 10.0f;
+		m_destPoint = m_collisionRays[COL_RAYS];
+	}
+	else
+	{
+		if (m_colTimeMax < 0.5f)
+			m_colTimeMax = 0.5f;
+		else
+			m_colTimeMax += 0.05f * deltaTime;
+		m_rayLength += 0.2f * deltaTime;
+
+		const auto index = std::distance(m_moveWeights.begin(), std::max_element(m_moveWeights.begin(), m_moveWeights.end()));
+		if (m_moveWeights[index] > 0.1f)
+			m_destPoint = m_collisionRays[index];
+	}
+}
+
+EnemyRatWatcher::EnemyRatWatcher(const SpriteData& spriteData, Player* playerPtr)
+	: EnemyRat(spriteData, RatData{ 4.0f, 8.0f, 13.0f }, playerPtr),
+	Sprite(spriteData)
+{
+}
+
+void EnemyRatWatcher::managePlayer(float deltaTime, float dist, float angle)
+{
+	float diffAngle = m_spriteData.rotation + angle;
+	while (diffAngle > PI_F)
+		diffAngle -= 2.0f * PI_F;
+	while (diffAngle < -PI_F)
+		diffAngle += 2.0f * PI_F;
+	//const float func = 1.3f / (abs(0.07f * funcAngle) + .03f);
+	float range = 8.0f;
+	const float sightRange = PI_F / 2.0f + 0.6f;
+	if (diffAngle > -sightRange && diffAngle < sightRange)
+		range = 18.0f;
+
+	if (dist < range && m_playerPtr->getLightStrength() > 0.1f)
+	{
+		bool playerLook = true;
+
+		for (Sprite* sprite : s_collidingSprites)
+		{
+			if (sprite == this)
+				continue;
+
+			EdgeArray edgeArray(m_headCenter, sprite);
+			const auto minIndex = edgeArray.getMinIndex();
+
+			const auto& playerCenter = m_playerPtr->getCenter();
+			const auto intersection1 = getIntersection(m_headCenter, playerCenter, edgeArray[minIndex].pos, edgeArray[(minIndex + 1) % edgeArray.size()].pos);
+			const auto intersection2 = getIntersection(m_headCenter, playerCenter, edgeArray[minIndex].pos, edgeArray[(minIndex - 1) % edgeArray.size()].pos);
+
+#if DEBUG_LINES
+			Line::s_debugLines.emplace_back(glm::vec3{ m_headCenter.x, m_headCenter.y, 0.0f }, glm::vec3{ playerCenter.x, playerCenter.y, 0.0f });
+#endif
+
+			const float rayLength = hypot(m_headCenter.x - playerCenter.x, m_headCenter.y - playerCenter.y);
+			//std::cerr << rayLength << '\n';
+			const float minCollisionLength = 0.0f;
+			if ((intersection1 && intersection1->offset01 * rayLength >= minCollisionLength) || (intersection2 && intersection2->offset01 * rayLength > minCollisionLength))
+			{
+				playerLook = false;
+				break;
+			}
+		}
+
+		if (playerLook)
+		{
+			updateRaysForPlayer(deltaTime, dist, angle); // follow the player
+		}
+		else
+		{
+			updateTargets(deltaTime);
+		}
+	}
+	else
+	{
+		updateTargets(deltaTime);
+	}
+
+	updateMoveToPlayer(deltaTime);
+}
+
+void EnemyRatWatcher::updateNearPlayer(float deltaTime, float dist, float angle)
+{
+	m_moveMode = MoveMode::Run;
+}
+
+
+EnemyRatSniffer::EnemyRatSniffer(const SpriteData& spriteData, Player* playerPtr)
+	: EnemyRat(spriteData, RatData{ 3.5f, 7.0f, 12.0f }, playerPtr),
+	Sprite(spriteData)
+{
+}
+
+void EnemyRatSniffer::managePlayer(float deltaTime, float dist, float angle)
+{
+	const float minDist = 12.0f;
+	if (dist < minDist || m_alarmTime > 0.0f)
+		updateRaysForPlayer(deltaTime, dist, angle); // follow the player
+	else
+		updateTargets(deltaTime);
+
+	updateMoveToPlayer(deltaTime);
+}
+
+void EnemyRatSniffer::updateNearPlayer(float deltaTime, float dist, float angle)
+{
+	const float minDist = 8.9f;
+	if (m_alarmTime > 0.0f)
+	{
+		m_alarmTime -= m_colTimeMax;
+		m_moveMode = MoveMode::Run;
+	}
+	else
+	{
+		m_moveMode = dist < minDist ? MoveMode::Run : MoveMode::Walk;
+	}
+
+	if (dist < minDist)
+	{
+		m_alarmTime = m_alarmTimeMax;
+	}
 }

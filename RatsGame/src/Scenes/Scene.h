@@ -12,6 +12,7 @@ class Scene
 protected:
 	struct ExtraData
 	{
+		char name[20]{};
 		int entityType = 0;
 		std::string textureName;
 		bool shadows = true;
@@ -30,7 +31,7 @@ public:
 	Player* createPlayer(const Vec2f& center, Texture* texture);
 	TextureSprite* createTextureSpriteBack(const Vec2f& center, const Vec2f& halfSize, float rotation, Texture* texture);
 	TextureSprite* createTextureBlockBack(const Vec2f& center, const Vec2f& halfSize, float rotation, Texture* texture);
-	EnemyRatGuard* createEnemyRatGuard(const Vec2f& center, const Vec2f& halfSize, float rotation, Texture* texture);
+	EnemyRatWatcher* createEnemyRatWatcher(const Vec2f& center, const Vec2f& halfSize, float rotation, Texture* texture);
 	EnemyRatSniffer* createEnemyRatSniffer(const Vec2f& center, const Vec2f& halfSize, float rotation, Texture* texture);
 	UISprite* createUISprite(const Vec2f& center, const Vec2f& halfSize, Texture* texture, UIPos uiPos);
 	Button* createButton(const Vec2f& center, const Vec2f& halfSize, Texture* texture, UIPos uiPos, const ButtonPresses& buttonPresses);
@@ -73,4 +74,6 @@ protected:
 	std::vector<std::unique_ptr<ShadowSprite>> m_shadowSpritesFront;
 	std::vector<std::unique_ptr<TextureSprite>> m_textureSpritesFront;
 	std::vector<std::unique_ptr<UISprite>> m_uiSprites;
+
+	std::unordered_map<std::string, TextureSprite*> m_namedSprites;
 };

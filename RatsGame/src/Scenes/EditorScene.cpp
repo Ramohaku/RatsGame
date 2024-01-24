@@ -5,7 +5,7 @@ using json = nlohmann::json;
 
 EditorScene::EditorScene(Window* window, std::unordered_map<std::string, std::unique_ptr<Texture>>& textures, /*const UpdateFunc& updateFunc,*/ GLint maxTextureUnits, Shader* textureShader, Shader* shadowShader, Shader* uiShader)
 	: Scene(window, textures/*updateFunc*/, maxTextureUnits, textureShader, shadowShader, uiShader),
-	m_textureNames{ "TextureSprite", "Player", "EnemyRatGuard", "EnemyRatSniffer" }
+	m_textureNames{ "TextureSprite", "Player", "EnemyRatWatcher", "EnemyRatSniffer" }
 	//m_textures(textures)
 {
 	//createPlayer(Vec2f{ 0.0f, 0.0f }, m_textures.at("Player").get());
@@ -130,6 +130,8 @@ void EditorScene::onRender()
 				}
 
 				ExtraData ed;
+				std::string strName = data["name"].get<std::string>();
+				memcpy(ed.name, strName.c_str(), 20 * sizeof(char));
 				ed.entityType = entityType;
 				ed.textureName = data["textureName"].get<std::string>();
 				ed.shadows = data["shadows"].get<bool>();
@@ -189,6 +191,7 @@ void EditorScene::onRender()
 
 				json& back = entitiesArray.emplace_back();
 				back["layer"] = 0;
+				back["name"] = ed.name;
 				back["entityType"] = ed.entityType;
 				back["shadows"] = ed.shadows;
 				back["blocking"] = ed.blocking;
@@ -214,6 +217,7 @@ void EditorScene::onRender()
 
 				json& back = entitiesArray.emplace_back();
 				back["layer"] = 1;
+				back["name"] = ed.name;
 				back["entityType"] = ed.entityType;
 				back["shadows"] = ed.shadows;
 				back["blocking"] = ed.blocking;
@@ -239,6 +243,7 @@ void EditorScene::onRender()
 
 				json& back = entitiesArray.emplace_back();
 				back["layer"] = 2;
+				back["name"] = ed.name;
 				back["entityType"] = ed.entityType;
 				back["shadows"] = ed.shadows;
 				back["blocking"] = ed.blocking;
@@ -283,6 +288,8 @@ void EditorScene::createImGuiEntities(std::vector<std::unique_ptr<TextureSprite>
 		std::string label = labelName + ' ' + std::to_string(i);
 		ImGui::Text(label.c_str());
 
+		ImGui::InputText((label + " name: ").c_str(), extraData[i].name, 20);
+
 		auto& spriteData = entity->getSpriteData();
 		ImGui::DragFloat2((label + " center: ").c_str(), (float*)&spriteData.center, 0.1f);
 		ImGui::DragFloat2((label + " halfSize: ").c_str(), (float*)&spriteData.halfSize, 0.1f);
@@ -301,7 +308,7 @@ void EditorScene::createImGuiEntities(std::vector<std::unique_ptr<TextureSprite>
 				spriteData.texPartScale = Vec2f{ 1.0f / 2.0f, 1.0f / 10.0f };
 				spriteData.texPartIndex = Vec2f{ 1.0f, 9.0f };
 				break;
-			case 2: // EnemyRatGuard
+			case 2: // EnemyRatWatcher
 			case 3: // EnemyRatSniffer
 				spriteData.texPartScale = Vec2f{ 1.0f / 2.0f, 1.0f / 10.0f };
 				spriteData.texPartIndex = Vec2f{ 1.0f, 9.0f };

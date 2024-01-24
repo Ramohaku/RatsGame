@@ -168,7 +168,7 @@ TextureSprite* Scene::createTextureBlockBack(const Vec2f& center, const Vec2f& h
     return ePtr;
 }
 
-EnemyRatGuard* Scene::createEnemyRatGuard(const Vec2f& center, const Vec2f& halfSize, float rotation, Texture* texture)
+EnemyRatWatcher* Scene::createEnemyRatWatcher(const Vec2f& center, const Vec2f& halfSize, float rotation, Texture* texture)
 {
     SpriteData spriteData;
     spriteData.center = center;
@@ -178,7 +178,7 @@ EnemyRatGuard* Scene::createEnemyRatGuard(const Vec2f& center, const Vec2f& half
     spriteData.texPartScale = Vec2f{ 1.0f / 2.0f, 1.0f / 10.0f };
     spriteData.texPartIndex = Vec2f{ 1.0f, 9.0f };
 
-    std::unique_ptr<EnemyRatGuard> entity = std::make_unique<EnemyRatGuard>(spriteData, m_player);
+    std::unique_ptr<EnemyRatWatcher> entity = std::make_unique<EnemyRatWatcher>(spriteData, m_player);
     auto* ePtr = entity.get();
     for (int i = 0; i < m_lights.size(); i++)
         m_shadowSpritesFront.push_back(std::make_unique<CharacterShadow>(spriteData, i, ePtr));
@@ -415,7 +415,7 @@ void Scene::loadEntities(const char* fileName)
             }
             case 2:
             {
-                auto sprite = std::make_unique<EnemyRatGuard>(spriteData, m_player);
+                auto sprite = std::make_unique<EnemyRatWatcher>(spriteData, m_player);
                 if (shadows)
                     for (int i = 0; i < m_lights.size(); i++)
                         shadowSprites->push_back(std::make_unique<CharacterShadow>(spriteData, i, sprite.get()));
@@ -435,6 +435,12 @@ void Scene::loadEntities(const char* fileName)
                 textureSprites->push_back(std::move(sprite));
                 break;
             }
+            }
+
+            std::string name = data["name"].get<std::string>();
+            if (!name.empty())
+            {
+                m_namedSprites[std::move(name)] = textureSprites->back().get();
             }
         }
         file.close();

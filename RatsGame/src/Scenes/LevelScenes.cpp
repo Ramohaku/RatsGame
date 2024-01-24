@@ -7,6 +7,16 @@ Level1::Level1(Window* window, std::unordered_map<std::string, std::unique_ptr<T
 {
     loadEntities("res/scenesData/level1.json");
 
+    //auto& rat1 = *static_cast<EnemyRat*>(m_namedSprites["rat1"]);
+    //rat1.addTargetPoint(Vec2f{ 18.0f, -10.0f });
+    //rat1.addTargetPoint(Vec2f{ 0.0f, -20.0f });
+    //rat1.addTargetPoint(Vec2f{ -23.0f, -7.0f });
+
+    //SpriteData sd1;
+    ////sd1.halfSize = { 1.5f, 1.5f };
+    //sd1.texturePtr = m_textures.at("TestColor").get();
+    //m_textureSpritesFront.push_back(std::make_unique<TextureSprite>(sd1));
+
     /*
     createLight(Light{ Vec3f{ 1.0f, 1.0f, 0.2f }, Vec2f{ -16.0f, 0.0f }, 0.1f, .50f });
     createLight(Light{ Vec3f{ 1.0f, 1.0f, 1.0f }, Vec2f{ -2.0f, 6.0f }, 0.1f, 3.0f });
@@ -32,4 +42,14 @@ Level1::Level1(Window* window, std::unordered_map<std::string, std::unique_ptr<T
     createEnemyRatSniffer(Vec2f{ -20.0f, 9.0f }, Vec2f{ 3.0f, 1.5f }, 0.0f, m_textures.at("Player").get());
     createEnemyRatSniffer(Vec2f{ 30.0f, -4.0f }, Vec2f{ 3.0f, 1.5f }, 0.0f, m_textures.at("Player").get());
     */
+}
+
+void Level1::onUpdate(float deltaTime)
+{
+    Scene::onUpdate(deltaTime);
+
+    //auto& rat = m_textureSpritesFront[m_textureSpritesFront.size() - 2];
+    //const float eyesX = rat->getCenter().x + rat->getHalfSize().x * cos(rat->getRotation());
+    //const float eyesY = rat->getCenter().y - rat->getHalfSize().y * sin(rat->getRotation());
+    //m_textureSpritesFront.back()->setCenter({ eyesX, eyesY });
 }

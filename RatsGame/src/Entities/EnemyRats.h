@@ -2,19 +2,20 @@
 #include "Player.h"
 #include "Debug.h"
 
-#define DEBUG_LINES_SNIFFER 0
+#define DEBUG_LINES 0
 
 class EnemyRat : public Rat
 {
 public:
 	EnemyRat(const SpriteData& spriteData, const RatData& ratData,
-		float sightDist, Player* playerPtr);
+		Player* playerPtr);
 	EnemyRat(const EnemyRat&) = delete;
 	EnemyRat(EnemyRat&&) = delete;
 	virtual ~EnemyRat() {}
 
 	virtual void onUpdate(float deltaTime) override;
 	virtual void managePlayer(float deltaTime, float dist, float angle) = 0;
+	void addTargetPoint(const Vec2f& point);
 protected:
 	enum class MoveMode
 	{
@@ -23,42 +24,47 @@ protected:
 		Run
 	};
 
+	// updates the collision rays and the move weights to follow the player
+	void updateRaysForPlayer(float deltaTime, float dist, float angle);
+
+	// updates the collision rays and the move weights to follow the current target
+	void updateRaysForTarget(float deltaTime, float dist, float angle);
+
+	// goes through all the colliding sprites (s_collidingSprites)
+	// for each colliding sprite looks for intersections of collision rays from range <startIndex, endIndex>
+	// if any collisions are found, decrease the move weight with the right index
+	void updateCollisions(int startIndex, int endIndex);
+
+	// updates the target collision ray (the direct one) according to the time m_colTimeP
+	// sets its x and y (m_collisionRays[COL_RAYS]) based on the angle
+	// sets its move weight (m_moveWeights[COL_RAYS]) to be > 2.0f
+	// then updates the collisions (looks for intersections)
+	void updateTargetCollisionRay(float deltaTime, float angle);
+
+	// updates all the collision rays except the direct one according to the time m_colTime
+	// returns true when it is not waiting
+	// goes through the collision rays and sets their values to next values from the range <-pi, pi)
+	bool updateCollisionRays(float deltaTime);
+
+	// updates the move weights by increasing the values to be bigger if they are closer to the angle
+	// !!! sets m_moving to true !!!
+	void updateMoveWeights(float deltaTime, float angle);
+
+	// updates the current target and takes control of the m_targetIndex if there are any targets
+	// otherwise stands and set m_moving to false
+	void updateTargets(float deltaTime);
+
+	// moves directly to the player if nothing is blocking the direct path (m_moveWeights[COL_RAYS] > 2.0f)
+	// otherwise tries to find a path to the player by increasing the ray length 
+	void updateMoveToPlayer(float deltaTime);
+
+	// does something when the player is near
+	virtual void updateNearPlayer(float deltaTime, float dist, float angle) {}
+protected:
 	Player* m_playerPtr;
-	float m_sightDist;
 	Vec2f m_destPoint;
 	MoveMode m_moveMode;
-};
 
-class EnemyRatGuard : public EnemyRat
-{
-public:
-	EnemyRatGuard(const SpriteData& spriteData, Player* playerPtr);
-	EnemyRatGuard(const EnemyRatGuard&) = delete;
-	EnemyRatGuard(EnemyRatGuard&&) = delete;
-	~EnemyRatGuard() {}
-
-	void managePlayer(float deltaTime, float dist, float angle) override;
-private:
-	float m_alarmTime = 0.0f;
-};
-
-class EnemyRatSniffer : public EnemyRat
-{
-public:
-	EnemyRatSniffer(const SpriteData& spriteData, Player* playerPtr);
-	~EnemyRatSniffer() {}
-
-	void onUpdate(float deltaTime) override;
-	void managePlayer(float deltaTime, float dist, float angle) override;
-	void addTargetPoint(const Vec2f& point);
-private:
-	void updateRaysForPlayer(float deltaTime, float dist, float angle);
-	void updateRaysForTarget(float deltaTime, float dist, float angle);
-	void updateCollisions(int startIndex, int endIndex);
-	void updateTargetCollisionRay(float deltaTime, float angle);
-	bool updateCollisionRays(float deltaTime);
-	void updateMoveWeights(float deltaTime, float angle);
-private:
 	std::array<Vec2f, COL_RAYS + 1> m_collisionRays;
 	std::array<float, COL_RAYS + 1> m_moveWeights;
 	float m_colTime = 0.0f;
@@ -66,12 +72,17 @@ private:
 	float m_colTimeP = 0.1f;
 	float m_colTimeMaxP = 0.1f;
 	float m_rayLength = 10.0f;
-	float m_alarmTime = 0.0f;
-	float m_alarmTimeMax = 3.0f;
 	std::vector<Vec2f> m_targetPoints;
 	size_t m_targetIndex = 0;
 	float m_nextIndexTime = 0.0f;
 	float m_nextIndexTimeMax = 10.0f;
+	
+	bool m_playerFollowing = false;
+	bool m_playerLostGo = false;
+	Vec2f m_playerLostPos;
+	float m_lostGoTime = 0.0f;
+
+	Vec2f m_headCenter;
 };
 
 class EnemyRatWatcher : public EnemyRat
@@ -83,4 +94,20 @@ public:
 	~EnemyRatWatcher() {}
 
 	void managePlayer(float deltaTime, float dist, float angle) override;
+private:
+	void updateNearPlayer(float deltaTime, float dist, float angle) override;
+};
+
+class EnemyRatSniffer : public EnemyRat
+{
+public:
+	EnemyRatSniffer(const SpriteData& spriteData, Player* playerPtr);
+	~EnemyRatSniffer() {}
+
+	void managePlayer(float deltaTime, float dist, float angle) override;
+private:
+	void updateNearPlayer(float deltaTime, float dist, float angle) override;
+private:
+	float m_alarmTime = 0.0f;
+	float m_alarmTimeMax = 3.0f;
 };

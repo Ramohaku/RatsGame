@@ -4,7 +4,7 @@
 #include "VertexArray.h"
 
 Application::Application()
-	: m_window(/*1920, 1080,*/ "OpenGL Project", 0.03f, false),
+	: m_window(/*1920, 1080,*/ "OpenGL Project", 0.03f, true),
     m_screenVertices{
         { Vec2f{ -1.0f, -1.0f }, Vec2f{ 0.0f, 0.0f } },
         { Vec2f{  1.0f, -1.0f }, Vec2f{ 1.0f, 0.0f } },
@@ -59,6 +59,7 @@ Application::Application()
     createTexture("TestBlock", "res/textures/testBlock.png");
     createTexture("TestBlock2", "res/textures/testBlock2.png");
     createTexture("TestButton", "res/textures/testButton.png");
+    createTexture("TestColor", "res/textures/color.png");
     /*m_rat1Texture = std::make_unique<Texture>("res/textures/rat1.png");
     m_ratPlayerTexture = std::make_unique<Texture>("res/textures/ratPlayer.png");
     m_testBlockTexture = std::make_unique<Texture>("res/textures/testBlock.png");
@@ -140,7 +141,7 @@ void Application::run()
 
 void Application::update()
 {
-#if DEBUG_LINES_SNIFFER
+#if DEBUG_LINES
     Line::s_debugLines.clear();
 #endif
 
@@ -163,7 +164,7 @@ void Application::render()
 
     m_currentScene->onRender();
 
-#if DEBUG_LINES_SNIFFER
+#if DEBUG_LINES
     for (auto& line : Line::s_debugLines)
     {
         const glm::mat4 mvp = m_window.getProj() * m_window.getView();
