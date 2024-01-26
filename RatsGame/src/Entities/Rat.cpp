@@ -40,8 +40,8 @@ void Rat::onUpdate(float deltaTime)
 
 	if (m_moving)
 	{
-		m_stretchTime += deltaTime * m_currentSpeed * 2.0f;
-		m_spriteData.halfSize.x = m_startHalfSize.x + sin(m_stretchTime) * 0.08f;
+		m_stretchTime += deltaTime * m_currentSpeed * 1.6f;
+		m_spriteData.halfSize.x = m_startHalfSize.x + sin(m_stretchTime) * 0.11f;
 	}
 	else
 	{

@@ -139,8 +139,8 @@
             {
                 "blocking": false,
                 "center": {
-                    "x": -3.5266265869140625,
-                    "y": 3.567737340927124
+                    "x": -5.235530853271484,
+                    "y": 3.111436367034912
                 },
                 "entityType": 1,
                 "flipHorizontal": 1.0,
@@ -151,17 +151,17 @@
                 },
                 "layer": 2,
                 "name": "",
-                "rotation": -1.5707967281341553,
+                "rotation": -1.4431147974391934e-06,
                 "shadows": true,
                 "texPartIndex": {
-                    "x": 1.0,
-                    "y": 9.0
+                    "x": 0.0,
+                    "y": 0.0
                 },
                 "texPartScale": {
-                    "x": 0.5,
+                    "x": 1.0,
                     "y": 0.10000000149011612
                 },
-                "textureName": "Player"
+                "textureName": "AllRats"
             },
             {
                 "blocking": true,
@@ -169,7 +169,7 @@
                     "x": 3.5,
                     "y": -20.200000762939453
                 },
-                "entityType": 2,
+                "entityType": 3,
                 "flipHorizontal": 1.0,
                 "flipVertical": 1.0,
                 "halfSize": {
@@ -181,14 +181,41 @@
                 "rotation": 0.0,
                 "shadows": true,
                 "texPartIndex": {
-                    "x": 1.0,
-                    "y": 9.0
+                    "x": 0.0,
+                    "y": 4.0
                 },
                 "texPartScale": {
-                    "x": 0.5,
+                    "x": 1.0,
                     "y": 0.10000000149011612
                 },
-                "textureName": "Player"
+                "textureName": "AllRats"
+            },
+            {
+                "blocking": true,
+                "center": {
+                    "x": 17.600000381469727,
+                    "y": 1.0
+                },
+                "entityType": 2,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 3.0,
+                    "y": 1.5
+                },
+                "layer": 2,
+                "name": "",
+                "rotation": 0.0,
+                "shadows": true,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 3.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 0.10000000149011612
+                },
+                "textureName": "AllRats"
             }
         ],
         "lights": [
@@ -223,7 +250,7 @@
             {
                 "active": true,
                 "center": {
-                    "x": 6.199999809265137,
+                    "x": 7.400000095367432,
                     "y": -8.600000381469727
                 },
                 "color": {

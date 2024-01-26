@@ -305,13 +305,13 @@ void EditorScene::createImGuiEntities(std::vector<std::unique_ptr<TextureSprite>
 			{
 			case 1: // Player
 				spriteData.halfSize = Vec2f{ 2.0f, 1.0f };
-				spriteData.texPartScale = Vec2f{ 1.0f / 2.0f, 1.0f / 10.0f };
-				spriteData.texPartIndex = Vec2f{ 1.0f, 9.0f };
+				spriteData.texPartScale = Vec2f{ 1.0f, 1.0f / 10.0f };
+				spriteData.texPartIndex = Vec2f{ 0.0f, 0.0f };
 				break;
 			case 2: // EnemyRatWatcher
 			case 3: // EnemyRatSniffer
-				spriteData.texPartScale = Vec2f{ 1.0f / 2.0f, 1.0f / 10.0f };
-				spriteData.texPartIndex = Vec2f{ 1.0f, 9.0f };
+				spriteData.texPartScale = Vec2f{ 1.0f, 1.0f / 10.0f };
+				spriteData.texPartIndex = Vec2f{ 0.0f, 1.0f };
 				extraData[i].blocking = true;
 				break;
 			}

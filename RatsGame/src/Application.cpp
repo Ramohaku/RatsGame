@@ -56,6 +56,7 @@ Application::Application()
 
     createTexture("Rat1", "res/textures/rat1.png");
     createTexture("Player", "res/textures/ratPlayer.png");
+    createTexture("AllRats", "res/textures/allrats.png");
     createTexture("TestBlock", "res/textures/testBlock.png");
     createTexture("TestBlock2", "res/textures/testBlock2.png");
     createTexture("TestButton", "res/textures/testButton.png");
