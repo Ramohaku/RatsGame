@@ -11,7 +11,7 @@ uniform sampler2D u_Textures[32];
 #define MAX_LIGHTS_COUNT 30
 
 uniform int u_LightsCount;
-uniform vec4 u_LightsColors[MAX_LIGHTS_COUNT];
+uniform vec4 u_LightsColors[MAX_LIGHTS_COUNT]; // a - active
 uniform vec4 u_LightsData[MAX_LIGHTS_COUNT]; // x,y - position, z - vanish, w - distance
 
 float Light(float d, float vanish, float distance)
@@ -28,7 +28,8 @@ void main()
     vec3 lightCol = vec3(0.);
     for (int i = 0; i < u_LightsCount; i++)
     {
-        if (!bool(u_LightsColors[i].a))
+        //if (!bool(u_LightsColors[i].a))
+        if (u_LightsColors[i].a == 0.0)
             continue;
 
         float d = length(v_Position - u_LightsData[i].xy);

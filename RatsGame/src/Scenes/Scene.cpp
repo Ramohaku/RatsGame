@@ -341,7 +341,8 @@ void Scene::loadEntities(const char* fileName)
 
             std::vector<std::unique_ptr<ShadowSprite>>* shadowSprites = nullptr;
             std::vector<std::unique_ptr<TextureSprite>>* textureSprites = nullptr;
-            switch (data["layer"].get<int>())
+            const int layer = data["layer"].get<int>();
+            switch (layer)
             {
             case 0:
                 //m_textureSpritesBack.push_back(std::move(sprite));
@@ -395,7 +396,7 @@ void Scene::loadEntities(const char* fileName)
                 auto sprite = std::make_unique<TextureSprite>(spriteData);
                 if (shadows)
                     for (int i = 0; i < m_lights.size(); i++)
-                        shadowSprites->push_back(std::make_unique<ShadowSprite>(spriteData, sprite.get(), i));
+                         shadowSprites->push_back(std::make_unique<ShadowSprite>(spriteData, sprite.get(), i));
                 if (blocking)
                     EnemyRat::s_collidingSprites.push_back(sprite.get());
                 textureSprites->push_back(std::move(sprite));

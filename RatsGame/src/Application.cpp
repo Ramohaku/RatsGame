@@ -4,7 +4,7 @@
 #include "VertexArray.h"
 
 Application::Application()
-	: m_window(/*1920, 1080,*/ "OpenGL Project", 0.03f, true),
+	: m_window(/*1920, 1080,*/ "OpenGL Project", 0.03f, false),
     m_screenVertices{
         { Vec2f{ -1.0f, -1.0f }, Vec2f{ 0.0f, 0.0f } },
         { Vec2f{  1.0f, -1.0f }, Vec2f{ 1.0f, 0.0f } },
@@ -59,8 +59,10 @@ Application::Application()
     createTexture("AllRats", "res/textures/allrats.png");
     createTexture("TestBlock", "res/textures/testBlock.png");
     createTexture("TestBlock2", "res/textures/testBlock2.png");
+    createTexture("TestBlock3", "res/textures/testBlock3.png");
     createTexture("TestButton", "res/textures/testButton.png");
     createTexture("TestColor", "res/textures/color.png");
+    createTexture("Bg1", "res/textures/bg1.png");
     /*m_rat1Texture = std::make_unique<Texture>("res/textures/rat1.png");
     m_ratPlayerTexture = std::make_unique<Texture>("res/textures/ratPlayer.png");
     m_testBlockTexture = std::make_unique<Texture>("res/textures/testBlock.png");
@@ -97,9 +99,10 @@ Application::Application()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     m_screenShader = std::make_unique<Shader>("res/shaders/screen_shader.vert", "res/shaders/screen_shader.frag");
+    m_screenShader->bind();
+    m_screenShader->setUniform1f("u_ScreenScale", static_cast<float>(m_window.getWidth()) / static_cast<float>(m_window.getHeight()));
+    
     m_screenVertexArray = std::make_unique<VertexArray<ScreenVertex>>(4);
-
-
 
     createMainMenu();
 }

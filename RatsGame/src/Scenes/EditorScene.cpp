@@ -27,13 +27,28 @@ void EditorScene::onRender()
 {
 	Scene::onRender();
 
+	ImGui::Begin("Position");
+
+	double mouseX, mouseY;
+	glfwGetCursorPos(m_window->getGlfwWindow(), &mouseX, &mouseY);
+
+	if (m_player)
+	{
+		mouseX = (mouseX - m_window->getWidth() / 2.0f ) * m_window->getScale() + m_player->getCenter().x;
+		mouseY = (mouseY - m_window->getHeight() / 2.0f) * m_window->getScale() + m_player->getCenter().y;
+	}
+
+	ImGui::Text("x: %f, x: %f", mouseX, mouseY);
+
+	ImGui::End();
+
 	ImGui::Begin("Lights");
 
 	{
 		int i = 0;
 		for (auto& light : m_lights)
 		{
-			std::string label = std::string("Light ") + std::to_string(i++);
+			std::string label = std::string("Light ") + std::to_string(i);
 			ImGui::Text(label.c_str());
 			//ImGui::DragFloat3((label + " color: ").c_str(), (float*)&light.color, 0.01f, 0.0f, 1.0f);
 			ImGui::ColorEdit3((label + " color: ").c_str(), (float*)&light.color);
@@ -41,6 +56,12 @@ void EditorScene::onRender()
 			ImGui::DragFloat((label + " vanish: ").c_str(), &light.vanish, 0.001f, 0.0f, 2.0f);
 			ImGui::DragFloat((label + " distance: ").c_str(), &light.distance, 0.01f, 0.0f, 20.0f);
 			ImGui::Checkbox((label + " active: ").c_str(), &light.active);
+
+			if (ImGui::Button((std::string("Delete light ") + label).c_str()))
+			{
+				m_lights.erase(m_lights.begin() + i);
+			}
+			i++;
 		}
 
 
@@ -305,12 +326,12 @@ void EditorScene::createImGuiEntities(std::vector<std::unique_ptr<TextureSprite>
 			{
 			case 1: // Player
 				spriteData.halfSize = Vec2f{ 2.0f, 1.0f };
-				spriteData.texPartScale = Vec2f{ 1.0f, 1.0f / 10.0f };
+				spriteData.texPartScale = Vec2f{ 1.0f / 10.0f, 1.0f / 10.0f };
 				spriteData.texPartIndex = Vec2f{ 0.0f, 0.0f };
 				break;
 			case 2: // EnemyRatWatcher
 			case 3: // EnemyRatSniffer
-				spriteData.texPartScale = Vec2f{ 1.0f, 1.0f / 10.0f };
+				spriteData.texPartScale = Vec2f{ 1.0f / 10.0f, 1.0f / 10.0f };
 				spriteData.texPartIndex = Vec2f{ 0.0f, 1.0f };
 				extraData[i].blocking = true;
 				break;
