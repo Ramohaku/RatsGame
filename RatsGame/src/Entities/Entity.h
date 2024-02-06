@@ -42,8 +42,12 @@ public:
 	inline float getFlipVertical() const { return m_spriteData.flipVertical; }
 
 	inline SpriteData& getSpriteData() { return m_spriteData; }
+
+	void calculateRange();
+	float getRange() const { return m_range; }
 protected:
 	SpriteData m_spriteData;
+	float m_range = 0.0f;
 };
 
 class TextureSprite : virtual public Sprite

@@ -7,10 +7,11 @@ Level1::Level1(Window* window, std::unordered_map<std::string, std::unique_ptr<T
 {
     loadEntities("res/scenesData/level1.json");
 
-    //auto& rat1 = *static_cast<EnemyRat*>(m_namedSprites["rat1"]);
-    //rat1.addTargetPoint(Vec2f{ 18.0f, -10.0f });
-    //rat1.addTargetPoint(Vec2f{ 0.0f, -20.0f });
-    //rat1.addTargetPoint(Vec2f{ -23.0f, -7.0f });
+    auto& rat1 = *static_cast<EnemyRat*>(m_namedSprites["rat1"]);
+    rat1.setRayLengthMax(5.0f);
+    rat1.setNextIndexTimeMax(5.2f);
+    rat1.addTargetPoint(Vec2f{ -28.0f, -3.0f });
+    rat1.addTargetPoint(Vec2f{ -28.0f, 11.0f });
 
     //SpriteData sd1;
     ////sd1.halfSize = { 1.5f, 1.5f };

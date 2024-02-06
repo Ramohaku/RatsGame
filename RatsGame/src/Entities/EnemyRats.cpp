@@ -115,6 +115,9 @@ void EnemyRat::updateCollisions(int startIndex, int endIndex)
 		if (sprite == this)
 			continue;
 
+		if (hypot(sprite->getCenter().x - m_spriteData.center.x, sprite->getCenter().y - m_spriteData.center.y) > m_rayLength + sprite->getRange())
+			continue;
+
 		EdgeArray edgeArray(m_spriteData.center, sprite);
 		const auto minIndex = edgeArray.getMinIndex();
 
@@ -201,12 +204,9 @@ void EnemyRat::updateMoveWeights(float deltaTime, float angle)
 	for (int i = 0; i < COL_RAYS / 4.0f + 1; i++)
 	{
 		m_moveWeights[(index - i) % COL_RAYS] *= 2.0f - static_cast<float>(i) * 0.4f;
-	}
-	m_moveWeights[index] *= 2.0f;
-	for (int i = 0; i < COL_RAYS / 4.0f + 1; i++)
-	{
 		m_moveWeights[(index + i) % COL_RAYS] *= 2.0f - static_cast<float>(i) * 0.4f;
 	}
+	m_moveWeights[index] *= 2.0f;
 
 	m_moving = true;
 }
@@ -283,7 +283,7 @@ void EnemyRat::updateMoveToPlayer(float deltaTime)
 	if (m_moveWeights[COL_RAYS] > 2.0f)
 	{
 		m_colTimeMax = 0.5f;
-		m_rayLength = 10.0f;
+		m_rayLength = m_rayLengthMax;
 		m_destPoint = m_collisionRays[COL_RAYS];
 	}
 	else
@@ -319,7 +319,7 @@ void EnemyRatWatcher::managePlayer(float deltaTime, float dist, float angle)
 	if (diffAngle > -sightRange && diffAngle < sightRange)
 		range = 18.0f;
 
-	if (dist < range && m_playerPtr->getLightStrength() > 0.1f)
+	if (dist < range && m_playerPtr->getLightStrength() > 0.05f)
 	{
 		bool playerLook = true;
 
@@ -327,6 +327,9 @@ void EnemyRatWatcher::managePlayer(float deltaTime, float dist, float angle)
 		{
 			if (sprite == this)
 				continue;
+
+			//if (hypot(sprite->getCenter().x - m_spriteData.center.x, sprite->getCenter().y - m_spriteData.center.y) > m_rayLength + sprite->getRange())
+			//	continue;
 
 			EdgeArray edgeArray(m_headCenter, sprite);
 			const auto minIndex = edgeArray.getMinIndex();

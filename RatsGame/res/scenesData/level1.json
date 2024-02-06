@@ -83,6 +83,114 @@
                 "textureName": "TestBlock3"
             },
             {
+                "blocking": false,
+                "center": {
+                    "x": 5.0,
+                    "y": 9.0
+                },
+                "entityType": 0,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 2.0,
+                    "y": 3.0
+                },
+                "layer": 0,
+                "name": "",
+                "rotation": 0.0,
+                "shadows": false,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureName": "TestBlock3"
+            },
+            {
+                "blocking": false,
+                "center": {
+                    "x": -19.0,
+                    "y": 9.0
+                },
+                "entityType": 0,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 2.0,
+                    "y": 7.0
+                },
+                "layer": 0,
+                "name": "",
+                "rotation": 0.0,
+                "shadows": false,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureName": "TestBlock3"
+            },
+            {
+                "blocking": false,
+                "center": {
+                    "x": -23.0,
+                    "y": 4.0
+                },
+                "entityType": 0,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 2.0,
+                    "y": 2.0
+                },
+                "layer": 0,
+                "name": "",
+                "rotation": 0.0,
+                "shadows": false,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureName": "TestBlock3"
+            },
+            {
+                "blocking": false,
+                "center": {
+                    "x": -28.0,
+                    "y": 4.0
+                },
+                "entityType": 0,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 3.0,
+                    "y": 12.0
+                },
+                "layer": 0,
+                "name": "",
+                "rotation": 0.0,
+                "shadows": false,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureName": "TestBlock3"
+            },
+            {
                 "blocking": true,
                 "center": {
                     "x": 0.0,
@@ -98,7 +206,7 @@
                 "layer": 1,
                 "name": "",
                 "rotation": 0.0,
-                "shadows": true,
+                "shadows": false,
                 "texPartIndex": {
                     "x": 0.0,
                     "y": 0.0
@@ -125,7 +233,7 @@
                 "layer": 1,
                 "name": "",
                 "rotation": 0.0,
-                "shadows": true,
+                "shadows": false,
                 "texPartIndex": {
                     "x": 0.0,
                     "y": 0.0
@@ -140,19 +248,19 @@
                 "blocking": true,
                 "center": {
                     "x": 12.0,
-                    "y": 0.0
+                    "y": 5.0
                 },
                 "entityType": 0,
                 "flipHorizontal": 1.0,
                 "flipVertical": 1.0,
                 "halfSize": {
                     "x": 5.0,
-                    "y": 12.0
+                    "y": 11.0
                 },
                 "layer": 1,
                 "name": "",
                 "rotation": 0.0,
-                "shadows": true,
+                "shadows": false,
                 "texPartIndex": {
                     "x": 0.0,
                     "y": 0.0
@@ -179,7 +287,7 @@
                 "layer": 1,
                 "name": "",
                 "rotation": 0.0,
-                "shadows": true,
+                "shadows": false,
                 "texPartIndex": {
                     "x": 0.0,
                     "y": 0.0
@@ -206,7 +314,250 @@
                 "layer": 1,
                 "name": "",
                 "rotation": 0.0,
-                "shadows": true,
+                "shadows": false,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureName": "TestBlock2"
+            },
+            {
+                "blocking": true,
+                "center": {
+                    "x": -23.0,
+                    "y": 11.0
+                },
+                "entityType": 0,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 2.0,
+                    "y": 5.0
+                },
+                "layer": 1,
+                "name": "",
+                "rotation": 0.0,
+                "shadows": false,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureName": "TestBlock2"
+            },
+            {
+                "blocking": true,
+                "center": {
+                    "x": -21.0,
+                    "y": -3.0
+                },
+                "entityType": 0,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 4.0,
+                    "y": 5.0
+                },
+                "layer": 1,
+                "name": "",
+                "rotation": 0.0,
+                "shadows": false,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureName": "TestBlock2"
+            },
+            {
+                "blocking": true,
+                "center": {
+                    "x": -37.0,
+                    "y": -13.0
+                },
+                "entityType": 0,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 20.0,
+                    "y": 5.0
+                },
+                "layer": 1,
+                "name": "",
+                "rotation": 0.0,
+                "shadows": false,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureName": "TestBlock2"
+            },
+            {
+                "blocking": true,
+                "center": {
+                    "x": -32.0,
+                    "y": 21.0
+                },
+                "entityType": 0,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 15.0,
+                    "y": 5.0
+                },
+                "layer": 1,
+                "name": "",
+                "rotation": 0.0,
+                "shadows": false,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureName": "TestBlock2"
+            },
+            {
+                "blocking": true,
+                "center": {
+                    "x": -36.0,
+                    "y": 6.0
+                },
+                "entityType": 0,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 5.0,
+                    "y": 10.0
+                },
+                "layer": 1,
+                "name": "",
+                "rotation": 0.0,
+                "shadows": false,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureName": "TestBlock2"
+            },
+            {
+                "blocking": true,
+                "center": {
+                    "x": -49.0,
+                    "y": 10.0
+                },
+                "entityType": 0,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 8.0,
+                    "y": 5.0
+                },
+                "layer": 1,
+                "name": "",
+                "rotation": 0.0,
+                "shadows": false,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureName": "TestBlock2"
+            },
+            {
+                "blocking": true,
+                "center": {
+                    "x": -62.0,
+                    "y": -11.0
+                },
+                "entityType": 0,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 5.0,
+                    "y": 7.0
+                },
+                "layer": 1,
+                "name": "",
+                "rotation": 0.0,
+                "shadows": false,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureName": "TestBlock2"
+            },
+            {
+                "blocking": true,
+                "center": {
+                    "x": -62.0,
+                    "y": 8.0
+                },
+                "entityType": 0,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 5.0,
+                    "y": 7.0
+                },
+                "layer": 1,
+                "name": "",
+                "rotation": 0.0,
+                "shadows": false,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureName": "TestBlock2"
+            },
+            {
+                "blocking": true,
+                "center": {
+                    "x": -48.5,
+                    "y": -1.5
+                },
+                "entityType": 0,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "layer": 1,
+                "name": "",
+                "rotation": 0.0,
+                "shadows": false,
                 "texPartIndex": {
                     "x": 0.0,
                     "y": 0.0
@@ -220,8 +571,8 @@
             {
                 "blocking": false,
                 "center": {
-                    "x": 0.0,
-                    "y": 0.0
+                    "x": 0.7120184302330017,
+                    "y": -0.3165176510810852
                 },
                 "entityType": 1,
                 "flipHorizontal": 1.0,
@@ -232,7 +583,7 @@
                 },
                 "layer": 2,
                 "name": "",
-                "rotation": 0.0,
+                "rotation": 3.363116314379561e-44,
                 "shadows": true,
                 "texPartIndex": {
                     "x": 0.0,
@@ -247,8 +598,8 @@
             {
                 "blocking": true,
                 "center": {
-                    "x": -27.600000381469727,
-                    "y": -4.900000095367432
+                    "x": -28.0,
+                    "y": -3.0
                 },
                 "entityType": 2,
                 "flipHorizontal": 1.0,
@@ -258,8 +609,8 @@
                     "y": 1.5
                 },
                 "layer": 2,
-                "name": "",
-                "rotation": 0.0,
+                "name": "rat1",
+                "rotation": -1.5549999475479126,
                 "shadows": true,
                 "texPartIndex": {
                     "x": 0.0,
@@ -285,7 +636,7 @@
                     "r": 0.9950980544090271
                 },
                 "distance": 3.0,
-                "vanish": 0.22699999809265137
+                "vanish": 0.1809999942779541
             },
             {
                 "active": true,
@@ -298,41 +649,41 @@
                     "g": 0.7590717077255249,
                     "r": 0.9656862616539001
                 },
-                "distance": 1.9700000286102295,
+                "distance": 1.940000057220459,
                 "vanish": 0.2840000092983246
             },
             {
-                "active": false,
+                "active": true,
                 "center": {
-                    "x": 0.800000011920929,
-                    "y": 8.899999618530273
+                    "x": -28.0,
+                    "y": 15.199999809265137
                 },
                 "color": {
                     "b": 1.0,
                     "g": 1.0,
                     "r": 1.0
                 },
-                "distance": 2.0,
-                "vanish": 0.10000000149011612
+                "distance": 2.5199999809265137,
+                "vanish": 0.11100000143051147
             },
             {
                 "active": true,
                 "center": {
-                    "x": -27.700000762939453,
-                    "y": 0.0
+                    "x": -35.900001525878906,
+                    "y": -6.0
                 },
                 "color": {
-                    "b": 1.0,
-                    "g": 1.0,
-                    "r": 1.0
+                    "b": 0.5735294222831726,
+                    "g": 0.5735294222831726,
+                    "r": 0.5735294222831726
                 },
-                "distance": 2.2300000190734863,
-                "vanish": 0.10199999809265137
+                "distance": 4.150000095367432,
+                "vanish": 0.1720000058412552
             },
             {
                 "active": true,
                 "center": {
-                    "x": -9.300000190734863,
+                    "x": -7.900000095367432,
                     "y": 16.600000381469727
                 },
                 "color": {
@@ -342,8 +693,22 @@
                 },
                 "distance": 1.4299999475479126,
                 "vanish": 0.17499999701976776
+            },
+            {
+                "active": true,
+                "center": {
+                    "x": -48.5,
+                    "y": -1.5
+                },
+                "color": {
+                    "b": 1.0,
+                    "g": 0.8154555559158325,
+                    "r": 0.37254899740219116
+                },
+                "distance": 2.890000104904175,
+                "vanish": 0.13899999856948853
             }
         ],
-        "windowScale": 0.023000000044703484
+        "windowScale": 0.02800000086426735
     }
 }

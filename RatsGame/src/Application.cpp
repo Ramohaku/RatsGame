@@ -48,6 +48,7 @@ Application::Application()
         samplers[i] = i;
     m_textureShader->bind();
     m_textureShader->setUniform1iv("u_Textures", m_maxTextureUnits, samplers);
+    m_textureShader->setUniform1i("u_AllLight", 0);
     m_shadowShader->bind();
     m_shadowShader->setUniform1iv("u_Textures", m_maxTextureUnits, samplers);
     m_uiShader->bind();

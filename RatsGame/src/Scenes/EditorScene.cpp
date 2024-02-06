@@ -27,21 +27,6 @@ void EditorScene::onRender()
 {
 	Scene::onRender();
 
-	ImGui::Begin("Position");
-
-	double mouseX, mouseY;
-	glfwGetCursorPos(m_window->getGlfwWindow(), &mouseX, &mouseY);
-
-	if (m_player)
-	{
-		mouseX = (mouseX - m_window->getWidth() / 2.0f ) * m_window->getScale() + m_player->getCenter().x;
-		mouseY = (mouseY - m_window->getHeight() / 2.0f) * m_window->getScale() + m_player->getCenter().y;
-	}
-
-	ImGui::Text("x: %f, x: %f", mouseX, mouseY);
-
-	ImGui::End();
-
 	ImGui::Begin("Lights");
 
 	{
@@ -297,6 +282,24 @@ void EditorScene::onRender()
 	}
 	ImGui::SliderFloat("Window scale", &m_windowScale, 0.0f, 0.1f);
 	m_window->setScale(m_windowScale);
+
+	double mouseX, mouseY;
+	glfwGetCursorPos(m_window->getGlfwWindow(), &mouseX, &mouseY);
+
+	if (m_player)
+	{
+		mouseX = (mouseX - m_window->getWidth() / 2.0f) * m_window->getScale() + m_player->getCenter().x;
+		mouseY = -((mouseY - m_window->getHeight() / 2.0f) * m_window->getScale() + m_player->getCenter().y);
+	}
+
+	ImGui::Text("x: %f, y: %f", mouseX, mouseY);
+
+	if (ImGui::Button("Toggle all black"))
+	{
+		m_allLight = !m_allLight;
+		m_textureShader->bind();
+		m_textureShader->setUniform1i("u_AllLight", static_cast<int>(m_allLight));
+	}
 
 	ImGui::End();
 }

@@ -250,8 +250,7 @@ void Scene::updateLights()
     std::vector<Vec4f> lightsData;
     for (const auto& light : m_lights)
     {
-        lightsColors.push_back(Vec4f{ light.color.r, light.color.g, light.color.b, static_cast<float>(light.active) });
-        lightsData.push_back(Vec4f{ light.center.x, light.center.y, light.vanish, light.distance });
+        float active = static_cast<float>(light.active);
 
         if (m_player)
         {
@@ -259,8 +258,40 @@ void Scene::updateLights()
             const float d = hypot(light.center.x - m_player->getCenter().x, light.center.y - m_player->getCenter().y);
             const float fn = std::clamp(light.distance / d - light.vanish, 0.0f, 3.0f);
             lightStrength += fn;
+
+            const float radius = static_cast<float>(m_window->getHeight()) * m_window->getScale() * 0.5f;
+            
+            const float dLeft = center.x - radius - light.center.x;
+            float fnLeft = std::clamp(light.distance / dLeft - light.vanish, 0.0f, 3.0f);
+            const float dRight = light.center.x - center.x - radius;
+            float fnRight = std::clamp(light.distance / dRight - light.vanish, 0.0f, 3.0f);
+            const float dUp = light.center.y - center.y - radius;
+            float fnUp = std::clamp(light.distance / dUp - light.vanish, 0.0f, 3.0f);
+            const float dDown = center.y - radius - light.center.y;
+            float fnDown = std::clamp(light.distance / dDown - light.vanish, 0.0f, 3.0f);
+
+            if ((dLeft > 0.0f && fnLeft == 0.0f) ||
+                (dRight > 0.0f && fnRight == 0.0f) ||
+                (dUp > 0.0f && fnUp == 0.0f) ||
+                (dDown > 0.0f && fnDown == 0.0f))
+            {
+                active = 0.0f;
+            }
+
+            /*float angle = atan2(light.center.y - m_player->getCenter().y, light.center.x - m_player->getCenter().x);
+            const float newX = center.x + radius * cos(angle);
+            const float newY = center.y + radius * sin(angle);
+            const float d2 = hypot(light.center.x + newX, light.center.y + newY);
+            const float fn2 = std::clamp(light.distance / d2 - light.vanish, 0.0f, 3.0f);
+
+            if (fn2 <= 0.0f)
+                active = 0.0f;*/
         }
+
+        lightsColors.push_back(Vec4f{ light.color.r, light.color.g, light.color.b, active });
+        lightsData.push_back(Vec4f{ light.center.x, light.center.y, light.vanish, light.distance });
     }
+
     if (m_player)
         m_player->setLightStrength(lightStrength);
 
@@ -461,11 +492,21 @@ void Scene::renderSprites(
     for (auto& va : vertexArrays)
         va.clear();
 
+    int skipCount = 0;
     {
         std::unordered_map<Texture*, int> texSlots;
         size_t index = 0;
         for (auto& sprite : sprites)
         {
+            if (m_player)
+            {
+                if (hypot(m_player->getCenter().x - sprite->getCenter().x, m_player->getCenter().y - sprite->getCenter().y) > sprite->getRange() + static_cast<float>(m_window->getHeight()) * m_window->getScale() * 0.5f)
+                {
+                    skipCount++;
+                    continue;
+                }
+            }
+
             Texture* texturePtr = sprite->getTexturePtr();
             int slot = 0;
             if (texSlots.find(texturePtr) != texSlots.end())
@@ -491,6 +532,7 @@ void Scene::renderSprites(
             }
         }
     }
+    //std::cerr << sprites.size() << " " << skipCount << '\n';
 
     for (auto& va : vertexArrays)
         va.createSubData();
@@ -500,6 +542,7 @@ void Scene::renderSprites(
     {
         va.bind();
         const uint32_t elementsCount = va.getObjectsCount() * va.getIndicesCount();
+        //std::cerr << elementsCount << '\n';
         glDrawElements(GL_TRIANGLES, elementsCount, GL_UNSIGNED_INT, nullptr);
     }
 }

@@ -16,6 +16,8 @@ public:
 	virtual void onUpdate(float deltaTime) override;
 	virtual void managePlayer(float deltaTime, float dist, float angle) = 0;
 	void addTargetPoint(const Vec2f& point);
+	void setNextIndexTimeMax(float nextIndexTimeMax) { m_nextIndexTimeMax = nextIndexTimeMax; }
+	void setRayLengthMax(float rayLengthMax) { m_rayLengthMax = rayLengthMax; m_rayLength = rayLengthMax; }
 protected:
 	enum class MoveMode
 	{
@@ -72,6 +74,7 @@ protected:
 	float m_colTimeP = 0.1f;
 	float m_colTimeMaxP = 0.1f;
 	float m_rayLength = 10.0f;
+	float m_rayLengthMax = 10.0f;
 	std::vector<Vec2f> m_targetPoints;
 	size_t m_targetIndex = 0;
 	float m_nextIndexTime = 0.0f;

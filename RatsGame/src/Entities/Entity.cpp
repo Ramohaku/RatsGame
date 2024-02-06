@@ -5,7 +5,12 @@
 Sprite::Sprite(const SpriteData& spriteData)
     : m_spriteData(spriteData)
 {
+    calculateRange();
+}
 
+void Sprite::calculateRange()
+{
+    m_range = hypot(m_spriteData.halfSize.x, m_spriteData.halfSize.y);
 }
 
 TextureSprite::TextureSprite(const SpriteData& spriteData)
@@ -56,7 +61,6 @@ const std::array<TextureVertex, 4>& TextureSprite::getVertices(int slot)
 
     return m_vertices;
 }
-
 ShadowSprite::ShadowSprite(const SpriteData& spriteData, Sprite* sprite, int lightIndex)
     : Sprite(spriteData),
     m_sprite(sprite), m_lightIndex(lightIndex)
