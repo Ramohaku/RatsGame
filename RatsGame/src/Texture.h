@@ -6,7 +6,9 @@ public:
 	Texture(const std::string& path);
 	Texture(const Texture&) = default;
 	Texture(Texture&&) = default;
-	~Texture();
+	~Texture() {}
+
+	void onClean();
 
 	void bind(unsigned int slot = 0) const;
 	void unbind() const;

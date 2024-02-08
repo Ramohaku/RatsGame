@@ -289,7 +289,7 @@ void EditorScene::onRender()
 	if (m_player)
 	{
 		mouseX = (mouseX - m_window->getWidth() / 2.0f) * m_window->getScale() + m_player->getCenter().x;
-		mouseY = -((mouseY - m_window->getHeight() / 2.0f) * m_window->getScale() + m_player->getCenter().y);
+		mouseY = -(mouseY - m_window->getHeight() / 2.0f) * m_window->getScale() + m_player->getCenter().y;
 	}
 
 	ImGui::Text("x: %f, y: %f", mouseX, mouseY);

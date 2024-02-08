@@ -64,6 +64,8 @@ Application::Application()
     createTexture("TestButton", "res/textures/testButton.png");
     createTexture("TestColor", "res/textures/color.png");
     createTexture("Bg1", "res/textures/bg1.png");
+    createTexture("Lightholder", "res/textures/lightholder.png");
+    createTexture("Level1_2_floor", "res/textures/level1_2_floor.png");
     /*m_rat1Texture = std::make_unique<Texture>("res/textures/rat1.png");
     m_ratPlayerTexture = std::make_unique<Texture>("res/textures/ratPlayer.png");
     m_testBlockTexture = std::make_unique<Texture>("res/textures/testBlock.png");
@@ -110,7 +112,6 @@ Application::Application()
 
 Application::~Application()
 {
-    delete m_currentScene;
 }
 
 void Application::run()
@@ -142,6 +143,8 @@ void Application::run()
         //const float time = 1.0f / m_deltaTime;
         //std::cout << time << '\n';
     }
+
+    clean();
 }
 
 void Application::update()
@@ -161,10 +164,9 @@ void Application::render()
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    // first pass
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // we're not using the stencil buffer now
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
     m_currentScene->onRender();
@@ -179,8 +181,7 @@ void Application::render()
     }
 #endif
 
-    // second pass
-    glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -191,7 +192,6 @@ void Application::render()
     m_screenVertexArray->bind();
     glDisable(GL_DEPTH_TEST);
     glBindTexture(GL_TEXTURE_2D, m_screenTexture);
-    //glDrawArrays(GL_TRIANGLES, 0, 6);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
     {
@@ -206,10 +206,28 @@ void Application::render()
     m_window.display();
 }
 
+void Application::clean()
+{
+    m_textureShader->onClean();
+    m_shadowShader->onClean();
+    m_uiShader->onClean();
+
+    m_screenShader->onClean();
+    m_screenVertexArray->onClean();
+
+    for (auto& [name, textue] : m_textures)
+        textue->onClean();
+
+    m_currentScene->onClean();
+    delete m_currentScene;
+}
+
 void Application::createNewScene(const UpdateFunc& updateFunc)
 {
     Scene::s_skip = true;
 
+    if (m_currentScene)
+        m_currentScene->onClean();
     delete m_currentScene;
     m_currentScene = new Scene(&m_window, m_textures, m_maxTextureUnits, m_textureShader.get(), m_shadowShader.get(), m_uiShader.get());
 }
@@ -220,20 +238,20 @@ void Application::createMainMenu()
     
     //m_currentScene->createUISprite(Vec2f{ 200.0f, -100.0f }, Vec2f{ 150.0f, 50.0f }, m_testButtonTexture.get(), UISprite::Left | UISprite::Up);
     ButtonPresses testLevelButtonPresses;
-    testLevelButtonPresses.onPress = []() {
+    testLevelButtonPresses.onPress = [] {
         std::cout << "pressed\n";
     };
-    testLevelButtonPresses.onRelease = [this]() {
+    testLevelButtonPresses.onRelease = [this] {
         std::cout << "released\n";
-        createTestLevel();
+        createLevel1();
     };
-    testLevelButtonPresses.onHoverOver = []() {
+    testLevelButtonPresses.onHoverOver = [] {
         std::cout << "hovered over\n";
     };
     m_currentScene->createButton(Vec2f{ 0.0f, 0.0f }, Vec2f{ 150.0f, 50.0f }, m_textures.at("TestButton").get(), UISprite::Center, testLevelButtonPresses);
 
     ButtonPresses editorLevelButtonPresses;
-    editorLevelButtonPresses.onRelease = [this]() {
+    editorLevelButtonPresses.onRelease = [this] {
         createEditorScene();
     };
     m_currentScene->createButton(Vec2f{ 0.0f, 200.0f }, Vec2f{ 150.0f, 50.0f }, m_textures.at("TestButton").get(), UISprite::Center, editorLevelButtonPresses);
@@ -243,16 +261,36 @@ void Application::createEditorScene()
 {
     Scene::s_skip = true;
 
+    m_currentScene->onClean();
     delete m_currentScene;
     m_currentScene = new EditorScene(&m_window, m_textures, m_maxTextureUnits, m_textureShader.get(), m_shadowShader.get(), m_uiShader.get());
 }
 
-void Application::createTestLevel()
+void Application::createLevel1()
 {
     Scene::s_skip = true;
 
+    m_currentScene->onClean();
     delete m_currentScene;
-    m_currentScene = new Level1(&m_window, m_textures, m_maxTextureUnits, m_textureShader.get(), m_shadowShader.get(), m_uiShader.get());
+    m_currentScene = new Level1(&m_window, m_textures, m_maxTextureUnits, m_textureShader.get(), m_shadowShader.get(), m_uiShader.get(), [this]() {
+        createLevel2();
+    });
+}
+
+void Application::createLevel2()
+{
+    Scene::s_skip = true;
+
+    SpriteData playerSpriteData = m_currentScene->getPlayer()->getSpriteData();
+    playerSpriteData.center.x += 49.0f;
+    playerSpriteData.center.y += 1.5f;
+
+    m_currentScene->onClean();
+    delete m_currentScene;
+    m_currentScene = new Level2(&m_window, m_textures, m_maxTextureUnits, m_textureShader.get(), m_shadowShader.get(), m_uiShader.get(), [this]() {
+        
+    });
+    m_currentScene->getPlayer()->setSpriteData(playerSpriteData);
 }
 
 void Application::createTexture(std::string&& name, std::string&& filepath)

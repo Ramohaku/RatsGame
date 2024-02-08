@@ -14,11 +14,29 @@ public:
 private:
 	void update();
 	void render();
+	void clean();
 
 	void createNewScene(const UpdateFunc& updateFunc = nullptr);
 	void createMainMenu();
 	void createEditorScene();
-	void createTestLevel();
+
+	void createLevel1();
+	void createLevel2();
+
+	/*template<typename T>
+	void createLevel(const std::function<void()>& transitionFunction, SpriteData* playerSpriteData)
+	{
+		Scene::s_skip = true;
+
+		m_currentScene->onClean();
+		delete m_currentScene;
+		m_currentScene = new T(&m_window, m_textures, m_maxTextureUnits, m_textureShader.get(), m_shadowShader.get(), m_uiShader.get(), transitionFunction);
+
+		if (playerSpriteData)
+		{
+			m_currentScene->getPlayer()->setSpriteData(*playerSpriteData);
+		}
+	}*/
 
 	void createTexture(std::string&& name, std::string&& filepath);
 private:

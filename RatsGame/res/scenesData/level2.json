@@ -1,0 +1,104 @@
+{
+    "sceneData": {
+        "entities": [
+            {
+                "blocking": false,
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "entityType": 0,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 8.0,
+                    "y": 6.5
+                },
+                "layer": 0,
+                "name": "",
+                "rotation": 0.0,
+                "shadows": false,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureName": "Level1_2_floor"
+            },
+            {
+                "blocking": true,
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "entityType": 0,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 1.100000023841858,
+                    "y": 1.100000023841858
+                },
+                "layer": 1,
+                "name": "",
+                "rotation": 0.0,
+                "shadows": false,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureName": "Lightholder"
+            },
+            {
+                "blocking": false,
+                "center": {
+                    "x": 4.436809539794922,
+                    "y": -4.1982831954956055
+                },
+                "entityType": 1,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 2.0,
+                    "y": 1.0
+                },
+                "layer": 2,
+                "name": "",
+                "rotation": -3.141592025756836,
+                "shadows": true,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 0.10000000149011612,
+                    "y": 0.10000000149011612
+                },
+                "textureName": "AllRats"
+            }
+        ],
+        "lights": [
+            {
+                "active": true,
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "color": {
+                    "b": 1.0,
+                    "g": 0.8156862854957581,
+                    "r": 0.37254902720451355
+                },
+                "distance": 2.890000104904175,
+                "vanish": 0.13899999856948853
+            }
+        ],
+        "windowScale": 0.024000000208616257
+    }
+}

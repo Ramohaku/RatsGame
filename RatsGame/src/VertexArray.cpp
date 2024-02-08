@@ -27,18 +27,6 @@ VertexArray<VertexType>::VertexArray(uint32_t vertexCount)
 }
 
 template<typename VertexType>
-VertexArray<VertexType>::~VertexArray()
-{
-	std::cout << "deleting vao: " << m_vao << "  " << &m_vao <<
-		" vbo: " << m_vbo << "  " << &m_vbo <<
-		" ibo: " << m_ibo << "  " << &m_ibo << '\n';
-
-	glDeleteBuffers(1, &m_vbo);
-	glDeleteBuffers(1, &m_ibo);
-	glDeleteVertexArrays(1, &m_vao);
-}
-
-template<typename VertexType>
 void VertexArray<VertexType>::clear()
 {
 	m_objectsCount = 0;
@@ -60,6 +48,18 @@ void VertexArray<VertexType>::createSubData()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, m_objectsCount * m_vertexCount * sizeof(VertexType), m_vertices.data());
+}
+
+template<typename VertexType>
+void VertexArray<VertexType>::onClean()
+{
+	std::cout << "deleting vao: " << m_vao << "  " << &m_vao <<
+		" vbo: " << m_vbo << "  " << &m_vbo <<
+		" ibo: " << m_ibo << "  " << &m_ibo << '\n';
+
+	glDeleteBuffers(1, &m_vbo);
+	glDeleteBuffers(1, &m_ibo);
+	glDeleteVertexArrays(1, &m_vao);
 }
 
 template<typename VertexType>

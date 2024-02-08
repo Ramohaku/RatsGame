@@ -35,7 +35,7 @@ Shader::Shader(const std::string& filepathVertex, const std::string& filepathFra
 	m_rendererID = program;
 }
 
-Shader::~Shader()
+void Shader::onClean()
 {
 	glDeleteProgram(m_rendererID);
 }

@@ -35,6 +35,11 @@ Scene::Scene(Window* window, std::unordered_map<std::string, std::unique_ptr<Tex
     m_uiShader->setUniformMat4f("u_MVP", mvp);
 }
 
+Scene::~Scene()
+{
+    Rat::s_collidingSprites.clear();
+}
+
 void Scene::onUpdate(float deltaTime)
 {
     /*if (m_lights.size() > 0)
@@ -108,6 +113,22 @@ void Scene::onRender()
     renderSprites(m_shadowVertexArraysFront, m_shadowSpritesFront, m_shadowShader);
     renderSprites(m_textureVertexArraysFront, m_textureSpritesFront, m_textureShader);
     renderSprites(m_uiVertexArrays, m_uiSprites, m_uiShader);
+}
+
+void Scene::onClean()
+{
+    for (auto& va : m_textureVertexArraysBack)
+        va.onClean();
+    for (auto& va : m_shadowVertexArraysMiddle)
+        va.onClean();
+    for (auto& va : m_textureVertexArraysMiddle)
+        va.onClean();
+    for (auto& va : m_shadowVertexArraysFront)
+        va.onClean();
+    for (auto& va : m_textureVertexArraysFront)
+        va.onClean();
+    for (auto& va : m_uiVertexArrays)
+        va.onClean();
 }
 
 void Scene::createLight(const Light& light)

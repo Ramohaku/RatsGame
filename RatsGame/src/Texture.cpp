@@ -25,7 +25,7 @@ Texture::Texture(const std::string& path)
 		stbi_image_free(data);
 }
 
-Texture::~Texture()
+void Texture::onClean()
 {
 	glDeleteTextures(1, &m_rendererID);
 }

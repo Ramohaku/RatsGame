@@ -7,7 +7,9 @@ public:
 	Shader(const std::string& filepathVertex, const std::string& filepathFragment);
 	Shader(const Shader&) = delete;
 	Shader(Shader&&) = delete;
-	~Shader();
+	~Shader() {}
+
+	void onClean();
 
 	void bind() const;
 	void unbind() const;

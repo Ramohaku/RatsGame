@@ -52,11 +52,13 @@ public:
     VertexArray(uint32_t vertexCount);
     VertexArray(const VertexArray&) = default;
     VertexArray(VertexArray&&) = default;
-    ~VertexArray();
+    ~VertexArray() {}
 
     void clear();
     void addGeometryPiece(const VertexType* vertices);
     void createSubData();
+
+    void onClean();
 
     void bind() const;
     void unbind() const;

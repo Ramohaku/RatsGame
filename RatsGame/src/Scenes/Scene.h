@@ -22,10 +22,13 @@ public:
 	Scene(Window* window, std::unordered_map<std::string, std::unique_ptr<Texture>>& textures,/* const UpdateFunc& updateFunc,*/ GLint maxTextureUnits, Shader* textureShader, Shader* shadowShader, Shader* uiShader);
 	Scene(const Scene&) = delete;
 	Scene(Scene&&) = delete;
-	virtual ~Scene() {}
+	virtual ~Scene();
 
 	virtual void onUpdate(float deltaTime);
 	virtual void onRender();
+	virtual void onClean();
+
+	Player* getPlayer() { return m_player; }
 
 	void createLight(const Light& light);
 	Player* createPlayer(const Vec2f& center, Texture* texture);

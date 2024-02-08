@@ -41,7 +41,9 @@ public:
 	inline float getFlipHorizontal() const { return m_spriteData.flipHorizontal; }
 	inline float getFlipVertical() const { return m_spriteData.flipVertical; }
 
+	void setSpriteData(const SpriteData& spriteData) { m_spriteData = spriteData; }
 	inline SpriteData& getSpriteData() { return m_spriteData; }
+	inline const SpriteData& getSpriteData() const { return m_spriteData; }
 
 	void calculateRange();
 	float getRange() const { return m_range; }
