@@ -5,7 +5,24 @@
 #include "Entities/Light.h"
 #include "Entities/UI/UISprite.h"
 
-using UpdateFunc = std::function<void(float)>;
+struct AppSceneData
+{
+	std::unordered_map<std::string, std::unique_ptr<Texture>> textures;
+	GLint maxTextureUnits = 0;
+
+	std::unordered_map<std::string, sf::SoundBuffer> soundBuffers;
+
+	std::unique_ptr<Shader> textureShader;
+	std::unique_ptr<Shader> shadowShader;
+	std::unique_ptr<Shader> uiShader;
+
+	std::vector<VertexArray<TextureVertex>> textureVertexArraysBack;
+	std::vector<VertexArray<ShadowVertex>> shadowVertexArraysMiddle;
+	std::vector<VertexArray<TextureVertex>> textureVertexArraysMiddle;
+	std::vector<VertexArray<ShadowVertex>> shadowVertexArraysFront;
+	std::vector<VertexArray<TextureVertex>> textureVertexArraysFront;
+	std::vector<VertexArray<UIVertex>> uiVertexArrays;
+};
 
 class Scene
 {
@@ -19,14 +36,13 @@ protected:
 		bool blocking = false;
 	};
 public:
-	Scene(Window* window, std::unordered_map<std::string, std::unique_ptr<Texture>>& textures,/* const UpdateFunc& updateFunc,*/ GLint maxTextureUnits, Shader* textureShader, Shader* shadowShader, Shader* uiShader);
+	Scene(Window* window, AppSceneData& appSceneData);
 	Scene(const Scene&) = delete;
 	Scene(Scene&&) = delete;
 	virtual ~Scene();
 
 	virtual void onUpdate(float deltaTime);
 	virtual void onRender();
-	virtual void onClean();
 
 	Player* getPlayer() { return m_player; }
 
@@ -53,21 +69,8 @@ private:
 		Shader* shader);
 protected:
 	Window* m_window;
-	//UpdateFunc m_updateFunc = nullptr;
 
-	std::unordered_map<std::string, std::unique_ptr<Texture>>& m_textures;
-
-	const GLint m_maxTextureUnits;
-	Shader* m_textureShader;
-	Shader* m_shadowShader;
-	Shader* m_uiShader;
-
-	std::vector<VertexArray<TextureVertex>> m_textureVertexArraysBack;
-	std::vector<VertexArray<ShadowVertex>> m_shadowVertexArraysMiddle;
-	std::vector<VertexArray<TextureVertex>> m_textureVertexArraysMiddle;
-	std::vector<VertexArray<ShadowVertex>> m_shadowVertexArraysFront;
-	std::vector<VertexArray<TextureVertex>> m_textureVertexArraysFront;
-	std::vector<VertexArray<UIVertex>> m_uiVertexArrays;
+	AppSceneData& m_appSceneData;
 	
 	Player* m_player = nullptr;
 	std::vector<Light> m_lights;

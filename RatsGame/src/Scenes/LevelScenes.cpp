@@ -2,13 +2,13 @@
 #include "LevelScenes.h"
 
 
-Level::Level(Window* window, std::unordered_map<std::string, std::unique_ptr<Texture>>& textures, GLint maxTextureUnits, Shader* textureShader, Shader* shadowShader, Shader* uiShader, const std::function<void()>& transitionFunction)
-    : Scene(window, textures, maxTextureUnits, textureShader, shadowShader, uiShader), m_transitionFunction(transitionFunction)
+Level::Level(Window* window, AppSceneData& appSceneData, const std::function<void()>& transitionFunction)
+    : Scene(window, appSceneData), m_transitionFunction(transitionFunction)
 {
 }
 
-Level1::Level1(Window* window, std::unordered_map<std::string, std::unique_ptr<Texture>>& textures, GLint maxTextureUnits, Shader* textureShader, Shader* shadowShader, Shader* uiShader, const std::function<void()>& transitionFunction)
-	: Level(window, textures, maxTextureUnits, textureShader, shadowShader, uiShader, transitionFunction)
+Level1::Level1(Window* window, AppSceneData& appSceneData, const std::function<void()>& transitionFunction)
+	: Level(window, appSceneData, transitionFunction)
 {
     loadEntities("res/scenesData/level1.json");
 
@@ -17,6 +17,8 @@ Level1::Level1(Window* window, std::unordered_map<std::string, std::unique_ptr<T
     rat1.setNextIndexTimeMax(5.2f);
     rat1.addTargetPoint(Vec2f{ -28.0f, -3.0f });
     rat1.addTargetPoint(Vec2f{ -28.0f, 11.0f });
+
+    m_closingDoor = m_namedSprites["closingDoor"];
 }
 
 void Level1::onUpdate(float deltaTime)
@@ -25,12 +27,16 @@ void Level1::onUpdate(float deltaTime)
 
     if (m_player->getCenter().x < -41.0f)
     {
-        m_transitionFunction();
+        m_closingDoor->move(0.0f, -20.0f * deltaTime);
+        if (m_closingDoor->getCenter().y <= -6.0f)
+        {
+            m_transitionFunction();
+        }
     }
 }
 
-Level2::Level2(Window* window, std::unordered_map<std::string, std::unique_ptr<Texture>>& textures, GLint maxTextureUnits, Shader* textureShader, Shader* shadowShader, Shader* uiShader, const std::function<void()>& transitionFunction)
-    : Level(window, textures, maxTextureUnits, textureShader, shadowShader, uiShader, transitionFunction)
+Level2::Level2(Window* window, AppSceneData& appSceneData, const std::function<void()>& transitionFunction)
+    : Level(window, appSceneData, transitionFunction)
 {
     loadEntities("res/scenesData/level2.json");
 }

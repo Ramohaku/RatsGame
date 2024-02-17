@@ -73,3 +73,11 @@ size_t findClosest(const std::array<float, COL_RAYS>& arr, float target)
 
 	return mid;
 }
+
+int randInt(int min, int max)
+{
+	static std::mt19937 engine(std::random_device{}());
+	static std::uniform_int_distribution<int> dist(min, max);
+
+	return dist(engine);
+}

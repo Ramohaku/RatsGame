@@ -300,10 +300,11 @@ void EnemyRat::updateMoveToPlayer(float deltaTime)
 	}
 }
 
-EnemyRatWatcher::EnemyRatWatcher(const SpriteData& spriteData, Player* playerPtr)
+EnemyRatWatcher::EnemyRatWatcher(const SpriteData& spriteData, Player* playerPtr, std::vector<sf::SoundBuffer*>&& soundBuffers)
 	: EnemyRat(spriteData, RatData{ 4.0f, 8.0f, 13.0f }, playerPtr),
-	Sprite(spriteData)
+	Sprite(spriteData), m_soundBuffers(soundBuffers)
 {
+	m_sound.setBuffer(*soundBuffers[randInt(0, soundBuffers.size() - 1)]);
 }
 
 void EnemyRatWatcher::managePlayer(float deltaTime, float dist, float angle)
@@ -354,6 +355,12 @@ void EnemyRatWatcher::managePlayer(float deltaTime, float dist, float angle)
 
 		if (playerLook)
 		{
+			if (m_sound.getStatus() != sf::Sound::Playing)
+			{
+				m_sound.setBuffer(*m_soundBuffers[randInt(0, m_soundBuffers.size() - 1)]);
+				m_sound.play();
+			}
+
 			updateRaysForPlayer(deltaTime, dist, angle); // follow the player
 		}
 		else

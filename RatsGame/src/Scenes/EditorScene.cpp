@@ -3,8 +3,8 @@
 
 using json = nlohmann::json;
 
-EditorScene::EditorScene(Window* window, std::unordered_map<std::string, std::unique_ptr<Texture>>& textures, /*const UpdateFunc& updateFunc,*/ GLint maxTextureUnits, Shader* textureShader, Shader* shadowShader, Shader* uiShader)
-	: Scene(window, textures/*updateFunc*/, maxTextureUnits, textureShader, shadowShader, uiShader),
+EditorScene::EditorScene(Window* window, AppSceneData& appSceneData)
+	: Scene(window, appSceneData),
 	m_textureNames{ "TextureSprite", "Player", "EnemyRatWatcher", "EnemyRatSniffer" }
 	//m_textures(textures)
 {
@@ -110,7 +110,7 @@ void EditorScene::onRender()
 				spriteData.halfSize.x = data["halfSize"]["x"].get<double, float>();
 				spriteData.halfSize.y = data["halfSize"]["y"].get<double, float>();
 				spriteData.rotation = data["rotation"].get<double, float>();
-				spriteData.texturePtr = m_textures.at(data["textureName"].get<std::string>()).get();
+				spriteData.texturePtr = m_appSceneData.textures.at(data["textureName"].get<std::string>()).get();
 				spriteData.texPartScale.x = data["texPartScale"]["x"].get<double, float>();
 				spriteData.texPartScale.y = data["texPartScale"]["y"].get<double, float>();
 				spriteData.texPartIndex.x = data["texPartIndex"]["x"].get<double, float>();
@@ -297,8 +297,8 @@ void EditorScene::onRender()
 	if (ImGui::Button("Toggle all black"))
 	{
 		m_allLight = !m_allLight;
-		m_textureShader->bind();
-		m_textureShader->setUniform1i("u_AllLight", static_cast<int>(m_allLight));
+		m_appSceneData.textureShader->bind();
+		m_appSceneData.textureShader->setUniform1i("u_AllLight", static_cast<int>(m_allLight));
 	}
 
 	ImGui::End();
@@ -364,10 +364,10 @@ void EditorScene::createImGuiEntities(std::vector<std::unique_ptr<TextureSprite>
 		std::string textureName = buffer;
 		std::cout << textureName << '\n';
 
-		if (m_textures.find(textureName) != m_textures.end())
+		if (m_appSceneData.textures.find(textureName) != m_appSceneData.textures.end())
 		{
 			SpriteData spriteData;
-			spriteData.texturePtr = m_textures.at(textureName).get();
+			spriteData.texturePtr = m_appSceneData.textures.at(textureName).get();
 
 			auto entity = std::make_unique<TextureSprite>(spriteData);
 			sprites.push_back(std::move(entity));

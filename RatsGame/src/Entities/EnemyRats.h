@@ -91,7 +91,7 @@ protected:
 class EnemyRatWatcher : public EnemyRat
 {
 public:
-	EnemyRatWatcher(const SpriteData& spriteData, Player* playerPtr);
+	EnemyRatWatcher(const SpriteData& spriteData, Player* playerPtr, std::vector<sf::SoundBuffer*>&& soundBuffers);
 	EnemyRatWatcher(const EnemyRatWatcher&) = delete;
 	EnemyRatWatcher(EnemyRatWatcher&&) = delete;
 	~EnemyRatWatcher() {}
@@ -99,6 +99,9 @@ public:
 	void managePlayer(float deltaTime, float dist, float angle) override;
 private:
 	void updateNearPlayer(float deltaTime, float dist, float angle) override;
+private:
+	std::vector<sf::SoundBuffer*> m_soundBuffers;
+	sf::Sound m_sound;
 };
 
 class EnemyRatSniffer : public EnemyRat

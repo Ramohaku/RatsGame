@@ -56,10 +56,37 @@
                 "textureName": "Lightholder"
             },
             {
+                "blocking": true,
+                "center": {
+                    "x": 8.5,
+                    "y": -4.5
+                },
+                "entityType": 0,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 0.5,
+                    "y": 2.0
+                },
+                "layer": 1,
+                "name": "",
+                "rotation": 0.0,
+                "shadows": true,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureName": "FastDoor"
+            },
+            {
                 "blocking": false,
                 "center": {
-                    "x": 4.436809539794922,
-                    "y": -4.1982831954956055
+                    "x": 3.9955053329467773,
+                    "y": -4.313286304473877
                 },
                 "entityType": 1,
                 "flipHorizontal": 1.0,

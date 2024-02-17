@@ -6,18 +6,9 @@ using json = nlohmann::json;
 
 bool Scene::s_skip = false;
  
-Scene::Scene(Window* window, std::unordered_map<std::string, std::unique_ptr<Texture>>& textures,/* const UpdateFunc& updateFunc,*/ GLint maxTextureUnits, Shader* textureShader, Shader* shadowShader, Shader* uiShader)
-    : m_window(window), m_textures(textures), //m_updateFunc(updateFunc),
-    m_maxTextureUnits(maxTextureUnits),
-    m_textureShader(textureShader), m_shadowShader(shadowShader), m_uiShader(uiShader)
+Scene::Scene(Window* window, AppSceneData& appSceneData)
+    : m_window(window), m_appSceneData(appSceneData)
 {
-    m_textureVertexArraysBack.emplace_back(4);
-    m_shadowVertexArraysMiddle.emplace_back(4);
-    m_textureVertexArraysMiddle.emplace_back(4);
-    m_shadowVertexArraysFront.emplace_back(4);
-    m_textureVertexArraysFront.emplace_back(4);
-    m_uiVertexArrays.emplace_back(4);
-
     const glm::mat4 proj = glm::ortho(0.0f,
         static_cast<float>(m_window->getWidth()), 0.0f,
         static_cast<float>(m_window->getHeight()), -1.0f, 1.0f
@@ -31,28 +22,30 @@ Scene::Scene(Window* window, std::unordered_map<std::string, std::unique_ptr<Tex
 
     const glm::mat4 mvp = proj * view;
 
-    m_uiShader->bind();
-    m_uiShader->setUniformMat4f("u_MVP", mvp);
+    m_appSceneData.uiShader->bind();
+    m_appSceneData.uiShader->setUniformMat4f("u_MVP", mvp);
 }
 
 Scene::~Scene()
 {
     Rat::s_collidingSprites.clear();
+
+    for (auto& va : m_appSceneData.textureVertexArraysBack)
+        va.clear();
+    for (auto& va : m_appSceneData.shadowVertexArraysMiddle)
+        va.clear();
+    for (auto& va : m_appSceneData.textureVertexArraysMiddle)
+        va.clear();
+    for (auto& va : m_appSceneData.shadowVertexArraysFront)
+        va.clear();
+    for (auto& va : m_appSceneData.textureVertexArraysFront)
+        va.clear();
+    for (auto& va : m_appSceneData.uiVertexArrays)
+        va.clear();
 }
 
 void Scene::onUpdate(float deltaTime)
 {
-    /*if (m_lights.size() > 0)
-    {
-        static float time = 0.0f;
-        time += deltaTime;
-        if (time > 2.0f)
-        {
-            time = 0.0f;
-            m_lights[1].active = !m_lights[1].active;
-        }
-    }*/
-
     for (auto& sprite : m_textureSpritesBack)
         sprite->onUpdate(deltaTime);
 
@@ -86,19 +79,6 @@ void Scene::onUpdate(float deltaTime)
         }
     }
 
-    //if (m_updateFunc)
-    //    m_updateFunc(deltaTime);
-
-    //static float rotation = 0.0f;
-    //rotation += 0.1 * deltaTime;
-    //m_textureSpritesBack[1]->setRotation(rotation);
-
-
-    //static float angle = 0.0f;
-    //angle += deltaTime * 3.0f;
-    //m_lights[1].center = Vec2f{ -2.0f + 5.0f * sin(angle), 6.0f };
-
-
     if (m_player)
         m_window->setCenter(m_player->getCenter());
 
@@ -107,28 +87,12 @@ void Scene::onUpdate(float deltaTime)
 
 void Scene::onRender()
 {
-    renderSprites(m_textureVertexArraysBack, m_textureSpritesBack, m_textureShader);
-    renderSprites(m_shadowVertexArraysMiddle, m_shadowSpritesMiddle, m_shadowShader);
-    renderSprites(m_textureVertexArraysMiddle, m_textureSpritesMiddle, m_textureShader);
-    renderSprites(m_shadowVertexArraysFront, m_shadowSpritesFront, m_shadowShader);
-    renderSprites(m_textureVertexArraysFront, m_textureSpritesFront, m_textureShader);
-    renderSprites(m_uiVertexArrays, m_uiSprites, m_uiShader);
-}
-
-void Scene::onClean()
-{
-    for (auto& va : m_textureVertexArraysBack)
-        va.onClean();
-    for (auto& va : m_shadowVertexArraysMiddle)
-        va.onClean();
-    for (auto& va : m_textureVertexArraysMiddle)
-        va.onClean();
-    for (auto& va : m_shadowVertexArraysFront)
-        va.onClean();
-    for (auto& va : m_textureVertexArraysFront)
-        va.onClean();
-    for (auto& va : m_uiVertexArrays)
-        va.onClean();
+    renderSprites(m_appSceneData.textureVertexArraysBack, m_textureSpritesBack, m_appSceneData.textureShader.get());
+    renderSprites(m_appSceneData.shadowVertexArraysMiddle, m_shadowSpritesMiddle, m_appSceneData.shadowShader.get());
+    renderSprites(m_appSceneData.textureVertexArraysMiddle, m_textureSpritesMiddle, m_appSceneData.textureShader.get());
+    renderSprites(m_appSceneData.shadowVertexArraysFront, m_shadowSpritesFront, m_appSceneData.shadowShader.get());
+    renderSprites(m_appSceneData.textureVertexArraysFront, m_textureSpritesFront, m_appSceneData.textureShader.get());
+    renderSprites(m_appSceneData.uiVertexArrays, m_uiSprites, m_appSceneData.uiShader.get());
 }
 
 void Scene::createLight(const Light& light)
@@ -199,7 +163,10 @@ EnemyRatWatcher* Scene::createEnemyRatWatcher(const Vec2f& center, const Vec2f& 
     spriteData.texPartScale = Vec2f{ 1.0f / 2.0f, 1.0f / 10.0f };
     spriteData.texPartIndex = Vec2f{ 1.0f, 9.0f };
 
-    std::unique_ptr<EnemyRatWatcher> entity = std::make_unique<EnemyRatWatcher>(spriteData, m_player);
+    std::vector<sf::SoundBuffer*> buffers = {
+        &m_appSceneData.soundBuffers.at("RatSound1")
+    };
+    std::unique_ptr<EnemyRatWatcher> entity = std::make_unique<EnemyRatWatcher>(spriteData, m_player, std::move(buffers));
     auto* ePtr = entity.get();
     for (int i = 0; i < m_lights.size(); i++)
         m_shadowSpritesFront.push_back(std::make_unique<CharacterShadow>(spriteData, i, ePtr));
@@ -298,15 +265,6 @@ void Scene::updateLights()
             {
                 active = 0.0f;
             }
-
-            /*float angle = atan2(light.center.y - m_player->getCenter().y, light.center.x - m_player->getCenter().x);
-            const float newX = center.x + radius * cos(angle);
-            const float newY = center.y + radius * sin(angle);
-            const float d2 = hypot(light.center.x + newX, light.center.y + newY);
-            const float fn2 = std::clamp(light.distance / d2 - light.vanish, 0.0f, 3.0f);
-
-            if (fn2 <= 0.0f)
-                active = 0.0f;*/
         }
 
         lightsColors.push_back(Vec4f{ light.color.r, light.color.g, light.color.b, active });
@@ -325,16 +283,16 @@ void Scene::updateLights()
     const glm::mat4 mvp = m_window->getProj() * m_window->getView();
     const int lightsCount = lightsColors.size();
 
-    m_textureShader->bind();
-    m_textureShader->setUniformMat4f("u_MVP", mvp);
-    m_textureShader->setUniform1i("u_LightsCount", lightsCount);
-    m_textureShader->setUniform4fv("u_LightsColors", lightsCount, lightsColors.data());
-    m_textureShader->setUniform4fv("u_LightsData", lightsCount, lightsData.data());
+    m_appSceneData.textureShader->bind();
+    m_appSceneData.textureShader->setUniformMat4f("u_MVP", mvp);
+    m_appSceneData.textureShader->setUniform1i("u_LightsCount", lightsCount);
+    m_appSceneData.textureShader->setUniform4fv("u_LightsColors", lightsCount, lightsColors.data());
+    m_appSceneData.textureShader->setUniform4fv("u_LightsData", lightsCount, lightsData.data());
 
-    m_shadowShader->bind();
-    m_shadowShader->setUniformMat4f("u_MVP", mvp);
-    m_shadowShader->setUniform1i("u_LightsCount", lightsCount);
-    m_shadowShader->setUniform4fv("u_LightsData", lightsCount, lightsData.data());
+    m_appSceneData.shadowShader->bind();
+    m_appSceneData.shadowShader->setUniformMat4f("u_MVP", mvp);
+    m_appSceneData.shadowShader->setUniform1i("u_LightsCount", lightsCount);
+    m_appSceneData.shadowShader->setUniform4fv("u_LightsData", lightsCount, lightsData.data());
 }
 
 void Scene::loadEntities(const char* fileName)
@@ -373,7 +331,7 @@ void Scene::loadEntities(const char* fileName)
             spriteData.halfSize.x = data["halfSize"]["x"].get<double, float>();
             spriteData.halfSize.y = data["halfSize"]["y"].get<double, float>();
             spriteData.rotation = data["rotation"].get<double, float>();
-            spriteData.texturePtr = m_textures.at(data["textureName"].get<std::string>()).get();
+            spriteData.texturePtr = m_appSceneData.textures.at(data["textureName"].get<std::string>()).get();
             spriteData.texPartScale.x = data["texPartScale"]["x"].get<double, float>();
             spriteData.texPartScale.y = data["texPartScale"]["y"].get<double, float>();
             spriteData.texPartIndex.x = data["texPartIndex"]["x"].get<double, float>();
@@ -468,7 +426,11 @@ void Scene::loadEntities(const char* fileName)
             }
             case 2:
             {
-                auto sprite = std::make_unique<EnemyRatWatcher>(spriteData, m_player);
+                std::vector<sf::SoundBuffer*> buffers = {
+                    &m_appSceneData.soundBuffers.at("RatSound1"),
+                    &m_appSceneData.soundBuffers.at("RatSound2"),
+                };
+                auto sprite = std::make_unique<EnemyRatWatcher>(spriteData, m_player, std::move(buffers));
                 if (shadows)
                     for (int i = 0; i < m_lights.size(); i++)
                         shadowSprites->push_back(std::make_unique<CharacterShadow>(spriteData, i, sprite.get()));
@@ -545,7 +507,7 @@ void Scene::renderSprites(
             auto& vertices = sprite->getVertices(slot);
             vertexArrays[index].addGeometryPiece(vertices.data());
 
-            if (texSlots.size() == m_maxTextureUnits)
+            if (texSlots.size() == m_appSceneData.maxTextureUnits)
             {
                 index++;
                 if (index == vertexArrays.size())

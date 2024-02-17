@@ -242,7 +242,7 @@
                     "x": 1.0,
                     "y": 1.0
                 },
-                "textureName": "TestBlock2"
+                "textureName": "Level1_wall1"
             },
             {
                 "blocking": true,
@@ -596,10 +596,37 @@
                 "textureName": "Lightholder"
             },
             {
+                "blocking": true,
+                "center": {
+                    "x": -40.5,
+                    "y": -2.0
+                },
+                "entityType": 0,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 0.5,
+                    "y": 2.0
+                },
+                "layer": 1,
+                "name": "closingDoor",
+                "rotation": 0.0,
+                "shadows": true,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureName": "FastDoor"
+            },
+            {
                 "blocking": false,
                 "center": {
-                    "x": 0.2096990942955017,
-                    "y": 0.2557867169380188
+                    "x": -0.42788392305374146,
+                    "y": 0.19469061493873596
                 },
                 "entityType": 1,
                 "flipHorizontal": 1.0,
@@ -610,7 +637,7 @@
                 },
                 "layer": 2,
                 "name": "",
-                "rotation": -3.7584893351425087e-17,
+                "rotation": -1.2304953063424495e-12,
                 "shadows": true,
                 "texPartIndex": {
                     "x": 0.0,
@@ -696,16 +723,16 @@
             {
                 "active": true,
                 "center": {
-                    "x": -35.900001525878906,
-                    "y": -6.0
+                    "x": -26.299999237060547,
+                    "y": -6.699999809265137
                 },
                 "color": {
-                    "b": 0.5735294222831726,
-                    "g": 0.5735294222831726,
-                    "r": 0.5735294222831726
+                    "b": 0.572549045085907,
+                    "g": 0.572549045085907,
+                    "r": 0.572549045085907
                 },
-                "distance": 4.150000095367432,
-                "vanish": 0.1720000058412552
+                "distance": 3.799999952316284,
+                "vanish": 0.29899999499320984
             },
             {
                 "active": true,

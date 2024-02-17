@@ -4,7 +4,7 @@
 class EditorScene : public Scene
 {
 public:
-	EditorScene(Window* window, std::unordered_map<std::string, std::unique_ptr<Texture>>& textures,/* const UpdateFunc& updateFunc,*/ GLint maxTextureUnits, Shader* textureShader, Shader* shadowShader, Shader* uiShader);
+	EditorScene(Window* window, AppSceneData& appSceneData);
 	EditorScene(const EditorScene&) = delete;
 	EditorScene(EditorScene&&) = delete;
 

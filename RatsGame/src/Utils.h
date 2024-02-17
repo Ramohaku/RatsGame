@@ -83,3 +83,4 @@ std::optional<Intersection> getIntersection(const Vec2f& p1, const Vec2f& p2, co
 size_t getClosest(const std::array<float, COL_RAYS>& arr, size_t index1, size_t index2, float target);
 size_t findClosest(const std::array<float, COL_RAYS>& arr, float target);
 
+int randInt(int min, int max);

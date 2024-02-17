@@ -9,6 +9,8 @@
 
 #include "nlohmann/json.hpp"
 
+#include <SFML/Audio.hpp>
+
 #include <iostream>
 
 #include <string>
@@ -24,3 +26,4 @@
 #include <chrono>
 #include <thread>
 #include <functional>
+#include <random>

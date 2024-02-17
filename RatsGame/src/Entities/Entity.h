@@ -31,6 +31,7 @@ public:
 	inline void setTexPartIndex(const Vec2f& texPartIndex) { m_spriteData.texPartIndex = texPartIndex; }
 	inline void setFlipHorizontal(float flip) { m_spriteData.flipHorizontal = flip; }
 	inline void setFlipVertical(float flip) { m_spriteData.flipVertical = flip; }
+	inline void move(float x, float y) { m_spriteData.center.x += x; m_spriteData.center.y += y; }
 
 	inline const Vec2f& getCenter() const { return m_spriteData.center; }
 	inline const Vec2f& getHalfSize() const { return m_spriteData.halfSize; }
