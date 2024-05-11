@@ -118,8 +118,14 @@ Application::Application()
 
     createMainMenu();
 
-    m_appSceneData.soundBuffers["RatSound1"].loadFromFile("res/audio/f1.wav");
-    m_appSceneData.soundBuffers["RatSound2"].loadFromFile("res/audio/f2.wav");
+    m_appSceneData.soundBuffers["RatSound1"].loadFromFile("res/audio/ratSound1.wav");
+    m_appSceneData.soundBuffers["RatSound2"].loadFromFile("res/audio/ratSound2.wav");
+    m_appSceneData.soundBuffers["RatSound3"].loadFromFile("res/audio/ratSound3.wav");
+    m_appSceneData.soundBuffers["RatSound4"].loadFromFile("res/audio/ratSound4.wav");
+    m_appSceneData.soundBuffers["RatSound5"].loadFromFile("res/audio/ratSound5.wav");
+    m_appSceneData.soundBuffers["RatSound6"].loadFromFile("res/audio/ratSound6.wav");
+    m_appSceneData.soundBuffers["RatSound7"].loadFromFile("res/audio/ratSound7.wav");
+    m_appSceneData.soundBuffers["RatSound8"].loadFromFile("res/audio/ratSound8.wav");
 }
 
 Application::~Application()
@@ -198,6 +204,8 @@ void Application::render()
     glClear(GL_COLOR_BUFFER_BIT);
 
     m_screenShader->bind();
+    //if (m_currentScene && m_currentScene->getPlayer())
+    //    m_screenShader->setUniform1f("u_PlayerAngle", m_currentScene->getPlayer()->getRotation());
     m_screenVertexArray->clear();
     m_screenVertexArray->addGeometryPiece(m_screenVertices);
     m_screenVertexArray->createSubData();
@@ -304,12 +312,14 @@ void Application::createLevel2()
     SpriteData playerSpriteData = m_currentScene->getPlayer()->getSpriteData();
     playerSpriteData.center.x += 49.0f;
     playerSpriteData.center.y += 1.5f;
+    float destRotation = m_currentScene->getPlayer()->getDestRotation();
 
     delete m_currentScene;
     m_currentScene = new Level2(&m_window, m_appSceneData, [this]() {
         
     });
     m_currentScene->getPlayer()->setSpriteData(playerSpriteData);
+    m_currentScene->getPlayer()->setDestRotation(destRotation);
 }
 
 void Application::createTexture(std::string&& name, std::string&& filepath)

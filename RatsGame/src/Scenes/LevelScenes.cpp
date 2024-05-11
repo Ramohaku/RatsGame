@@ -3,8 +3,20 @@
 
 
 Level::Level(Window* window, AppSceneData& appSceneData, const std::function<void()>& transitionFunction)
-    : Scene(window, appSceneData), m_transitionFunction(transitionFunction)
+    : Scene(window, appSceneData, true), m_transitionFunction(transitionFunction)
 {
+    glfwSetInputMode(window->getGlfwWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void Level::onPauseStart()
+{
+    glfwSetInputMode(m_window->getGlfwWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+}
+
+void Level::onPauseEnd()
+{
+    glfwSetInputMode(m_window->getGlfwWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPos(m_window->getGlfwWindow(), m_window->getWidth() / 2.0, m_window->getHeight() / 2.0);
 }
 
 Level1::Level1(Window* window, AppSceneData& appSceneData, const std::function<void()>& transitionFunction)

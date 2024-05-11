@@ -7,6 +7,10 @@ public:
 	Level(Window* window, AppSceneData& appSceneData, const std::function<void()>& transitionFunction);
 	virtual ~Level() {}
 protected:
+	virtual void onPauseStart() override;
+	virtual void onPauseEnd() override;
+
+protected:
 	std::function<void()> m_transitionFunction;
 };
 

@@ -6,6 +6,8 @@
 static constexpr int SAMPLES = 8;
 #endif
 
+Vec2d Window::s_mousePos{};
+
 Window::Window(int width, int height, const char* title, float scale)
     : m_width(width), m_height(height), m_scale(scale),
     m_proj(glm::ortho(0.0f,
@@ -45,6 +47,12 @@ Window::Window(const char* title, float scale, bool fullscreen)
     createWindow(m_width, m_height, title, fullscreen ? monitor : nullptr, nullptr);
 }
 
+void Window::mouseCallback(GLFWwindow* window, double pos_x, double pos_y)
+{
+    s_mousePos.x = pos_x;
+    s_mousePos.y = pos_y;
+}
+
 void Window::initWindow()
 {
     if (!glfwInit())
@@ -74,6 +82,8 @@ void Window::createWindow(int width, int height, const char* title, GLFWmonitor*
 
     glfwMakeContextCurrent(m_glfwWindow);
     glfwSwapInterval(1);
+
+    glfwSetCursorPosCallback(m_glfwWindow, Window::mouseCallback);
 }
 
 Window::~Window()
@@ -98,12 +108,19 @@ void Window::display()
     glfwSwapBuffers(m_glfwWindow);
 }
 
-void Window::setCenter(const Vec2f& center)
+void Window::updateView(const Vec2f& center, float angle)
 {
-    m_view = glm::translate(glm::mat4(1.0f), glm::vec3(
-        static_cast<float>(m_width) * m_scale / 2.0f - center.x,
-        static_cast<float>(m_height) * m_scale / 2.0f - center.y,
-    0.0f));
+    glm::vec3 playerCenter = glm::vec3(-center.x, -center.y, 0.0f);
+    glm::vec3 screenTranslateCenter = glm::vec3(static_cast<float>(m_width) * m_scale / 2.0f,
+                                         static_cast<float>(m_height) * m_scale / 4.0f,
+                                         0.0f);
+
+    glm::mat4 translationToCenter = glm::translate(glm::mat4(1.0f), playerCenter);
+    glm::mat4 rotationAroundCenter = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
+    glm::mat4 translationToScreenCenter = glm::translate(glm::mat4(1.0f), screenTranslateCenter);
+
+    m_view = translationToScreenCenter * rotationAroundCenter * translationToCenter;
+
 }
 
 void Window::setScale(float scale)

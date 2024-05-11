@@ -81,3 +81,44 @@ int randInt(int min, int max)
 
 	return dist(engine);
 }
+
+float getAngleBetweenLineAndSegment(float lineAngle, const Vec2f& pos1, const Vec2f& pos2)
+{
+	const Vec2f v1 = { cos(lineAngle), sin(lineAngle) };
+	const Vec2f v2 = { pos2.x - pos1.x, pos2.y - pos1.y };
+
+	const float dot = dotProduct(v1, v2);
+
+	const float mag1 = magnitude(v1);
+	const float mag2 = magnitude(v2);
+
+	return acos(dot / (mag1 * mag2));
+}
+
+void correctAngleTooSmall(float& angle)
+{
+	if (angle < -PI_F)
+		angle += 2.0f * PI_F;
+}
+
+void correctAngleTooBig(float& angle)
+{
+	if (angle > PI_F)
+		angle -= 2.0f * PI_F;
+}
+
+void correctAngleOneIter(float& angle)
+{
+	if (angle < -PI_F)
+		angle += 2.0f * PI_F;
+	else if (angle > PI_F)
+		angle -= 2.0f * PI_F;
+}
+
+void correctAngleManyIter(float& angle)
+{
+	while (angle < -PI_F)
+		angle += 2.0f * PI_F;
+	while (angle > PI_F)
+		angle -= 2.0f * PI_F;
+}

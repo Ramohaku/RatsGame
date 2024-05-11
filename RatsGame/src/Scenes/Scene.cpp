@@ -6,8 +6,8 @@ using json = nlohmann::json;
 
 bool Scene::s_skip = false;
  
-Scene::Scene(Window* window, AppSceneData& appSceneData)
-    : m_window(window), m_appSceneData(appSceneData)
+Scene::Scene(Window* window, AppSceneData& appSceneData, bool pauseable)
+    : m_window(window), m_appSceneData(appSceneData), m_pauseable(pauseable)
 {
     const glm::mat4 proj = glm::ortho(0.0f,
         static_cast<float>(m_window->getWidth()), 0.0f,
@@ -46,26 +46,48 @@ Scene::~Scene()
 
 void Scene::onUpdate(float deltaTime)
 {
-    for (auto& sprite : m_textureSpritesBack)
-        sprite->onUpdate(deltaTime);
+    bool escPressed = glfwGetKey(m_window->getGlfwWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS;
 
-    for (auto& sprite : m_shadowSpritesMiddle)
+    if (m_paused)
     {
-        sprite->onUpdate(deltaTime);
-        sprite->setLightActive(m_lights[sprite->getLightIndex()].active);
+        if (escPressed && !m_escPrePressed && m_pauseable)
+        {
+            onPauseEnd();
+            m_paused = false;
+        }
+    }
+    else
+    {
+        for (auto& sprite : m_textureSpritesBack)
+            sprite->onUpdate(deltaTime);
+
+        for (auto& sprite : m_shadowSpritesMiddle)
+        {
+            sprite->onUpdate(deltaTime);
+            sprite->setLightActive(m_lights[sprite->getLightIndex()].active);
+        }
+
+        for (auto& sprite : m_textureSpritesMiddle)
+            sprite->onUpdate(deltaTime);
+
+        for (auto& sprite : m_shadowSpritesFront)
+        {
+            sprite->onUpdate(deltaTime);
+            sprite->setLightActive(m_lights[sprite->getLightIndex()].active);
+        }
+
+        for (auto& sprite : m_textureSpritesFront)
+            sprite->onUpdate(deltaTime);
+
+        if (escPressed && !m_escPrePressed && m_pauseable)
+        {
+            onPauseStart();
+            m_paused = true;
+        }
     }
 
-    for (auto& sprite : m_textureSpritesMiddle)
-        sprite->onUpdate(deltaTime);
+    m_escPrePressed = escPressed;
 
-    for (auto& sprite : m_shadowSpritesFront)
-    {
-        sprite->onUpdate(deltaTime);
-        sprite->setLightActive(m_lights[sprite->getLightIndex()].active);
-    }
-
-    for (auto& sprite : m_textureSpritesFront)
-        sprite->onUpdate(deltaTime);
 
     for (auto& sprite : m_uiSprites)
     {
@@ -80,7 +102,9 @@ void Scene::onUpdate(float deltaTime)
     }
 
     if (m_player)
-        m_window->setCenter(m_player->getCenter());
+    {
+        m_window->updateView(m_player->getCenter(), m_player->getRotation() + PI_F / 2.0f);
+    }
 
     updateLights();
 }
@@ -98,118 +122,6 @@ void Scene::onRender()
 void Scene::createLight(const Light& light)
 {
     m_lights.push_back(light);
-}
-
-Player* Scene::createPlayer(const Vec2f& center, Texture* texture)
-{
-    SpriteData spriteData;
-    spriteData.center = center;
-    spriteData.halfSize = Vec2f{ 2.0f, 1.0f };
-    spriteData.texturePtr = texture;
-    spriteData.texPartScale = Vec2f{ 1.0f / 2.0f, 1.0f / 10.0f };
-    spriteData.texPartIndex = Vec2f{ 1.0f, 9.0f };
-
-    std::unique_ptr<Player> player = std::make_unique<Player>(spriteData, m_window);
-    m_player = player.get();
-
-    for (int i = 0; i < m_lights.size(); i++)
-        m_shadowSpritesFront.push_back(std::make_unique<CharacterShadow>(spriteData, i, m_player));
-    m_textureSpritesFront.push_back(std::move(player));
-
-    return m_player;
-}
-
-TextureSprite* Scene::createTextureSpriteBack(const Vec2f& center, const Vec2f& halfSize, float rotation, Texture* texture)
-{
-    SpriteData spriteData;
-    spriteData.center = center;
-    spriteData.halfSize = halfSize;
-    spriteData.rotation = rotation;
-    spriteData.texturePtr = texture;
-
-    auto entity = std::make_unique<TextureSprite>(spriteData);
-    auto* ePtr = entity.get();
-    m_textureSpritesBack.push_back(std::move(entity));
-
-    return ePtr;
-}
-
-TextureSprite* Scene::createTextureBlockBack(const Vec2f& center, const Vec2f& halfSize, float rotation, Texture* texture)
-{
-    SpriteData spriteData;
-    spriteData.center = center;
-    spriteData.halfSize = halfSize;
-    spriteData.rotation = rotation;
-    spriteData.texturePtr = texture;
-
-    auto entity = std::make_unique<TextureSprite>(spriteData);
-    auto* ePtr = entity.get();
-    for (int i = 0; i < m_lights.size(); i++)
-        m_shadowSpritesMiddle.push_back(std::make_unique<ShadowSprite>(spriteData, ePtr, i));
-    m_textureSpritesMiddle.push_back(std::move(entity));
-
-    EnemyRat::s_collidingSprites.push_back(ePtr);
-
-    return ePtr;
-}
-
-EnemyRatWatcher* Scene::createEnemyRatWatcher(const Vec2f& center, const Vec2f& halfSize, float rotation, Texture* texture)
-{
-    SpriteData spriteData;
-    spriteData.center = center;
-    spriteData.halfSize = halfSize;
-    spriteData.rotation = rotation;
-    spriteData.texturePtr = texture;
-    spriteData.texPartScale = Vec2f{ 1.0f / 2.0f, 1.0f / 10.0f };
-    spriteData.texPartIndex = Vec2f{ 1.0f, 9.0f };
-
-    std::vector<sf::SoundBuffer*> buffers = {
-        &m_appSceneData.soundBuffers.at("RatSound1")
-    };
-    std::unique_ptr<EnemyRatWatcher> entity = std::make_unique<EnemyRatWatcher>(spriteData, m_player, std::move(buffers));
-    auto* ePtr = entity.get();
-    for (int i = 0; i < m_lights.size(); i++)
-        m_shadowSpritesFront.push_back(std::make_unique<CharacterShadow>(spriteData, i, ePtr));
-    m_textureSpritesFront.push_back(std::move(entity));
-
-    EnemyRat::s_collidingSprites.push_back(ePtr);
-
-    return ePtr;
-}
-
-EnemyRatSniffer* Scene::createEnemyRatSniffer(const Vec2f& center, const Vec2f& halfSize, float rotation, Texture* texture)
-{
-    SpriteData spriteData;
-    spriteData.center = center;
-    spriteData.halfSize = halfSize;
-    spriteData.rotation = rotation;
-    spriteData.texturePtr = texture;
-    spriteData.texPartScale = Vec2f{ 1.0f / 2.0f, 1.0f / 10.0f };
-    spriteData.texPartIndex = Vec2f{ 1.0f, 9.0f };
-
-    std::unique_ptr<EnemyRatSniffer> entity = std::make_unique<EnemyRatSniffer>(spriteData, m_player);
-    auto* ePtr = entity.get();
-    for (int i = 0; i < m_lights.size(); i++)
-        m_shadowSpritesFront.push_back(std::make_unique<CharacterShadow>(spriteData, i, ePtr));
-    m_textureSpritesFront.push_back(std::move(entity));
-
-    EnemyRat::s_collidingSprites.push_back(ePtr);
-
-    return ePtr;
-}
-
-UISprite* Scene::createUISprite(const Vec2f& center, const Vec2f& halfSize, Texture* texture, UIPos uiPos)
-{
-    SpriteData spriteData;
-    spriteData.center = center;
-    spriteData.halfSize = halfSize;
-    spriteData.texturePtr = texture;
-
-    std::unique_ptr<UISprite> entity = std::make_unique<UISprite>(spriteData, m_window, uiPos);
-    auto* ePtr = entity.get();
-    m_uiSprites.push_back(std::move(entity));
-
-    return ePtr;
 }
 
 Button* Scene::createButton(const Vec2f& center, const Vec2f& halfSize, Texture* texture, UIPos uiPos, const ButtonPresses& buttonPresses)
@@ -280,7 +192,7 @@ void Scene::updateLights()
     for (auto& shadowSprite : m_shadowSpritesFront)
         shadowSprite->updateLights(lightsData);
 
-    const glm::mat4 mvp = m_window->getProj() * m_window->getView();
+    const auto mvp = m_window->getProj() * m_window->getView();
     const int lightsCount = lightsColors.size();
 
     m_appSceneData.textureShader->bind();
@@ -429,6 +341,12 @@ void Scene::loadEntities(const char* fileName)
                 std::vector<sf::SoundBuffer*> buffers = {
                     &m_appSceneData.soundBuffers.at("RatSound1"),
                     &m_appSceneData.soundBuffers.at("RatSound2"),
+                    &m_appSceneData.soundBuffers.at("RatSound3"),
+                    &m_appSceneData.soundBuffers.at("RatSound4"),
+                    &m_appSceneData.soundBuffers.at("RatSound5"),
+                    &m_appSceneData.soundBuffers.at("RatSound6"),
+                    &m_appSceneData.soundBuffers.at("RatSound7"),
+                    &m_appSceneData.soundBuffers.at("RatSound8"),
                 };
                 auto sprite = std::make_unique<EnemyRatWatcher>(spriteData, m_player, std::move(buffers));
                 if (shadows)
@@ -475,7 +393,6 @@ void Scene::renderSprites(
     for (auto& va : vertexArrays)
         va.clear();
 
-    int skipCount = 0;
     {
         std::unordered_map<Texture*, int> texSlots;
         size_t index = 0;
@@ -483,9 +400,23 @@ void Scene::renderSprites(
         {
             if (m_player)
             {
-                if (hypot(m_player->getCenter().x - sprite->getCenter().x, m_player->getCenter().y - sprite->getCenter().y) > sprite->getRange() + static_cast<float>(m_window->getHeight()) * m_window->getScale() * 0.5f)
+                const Vec2f& playerCenter = m_player->getCenter();
+                const Vec2f& spriteCenter = sprite->getCenter();
+
+                float viewRange = 0.8f;
+
+                /*float rotationDiff = m_player->getRotation()
+                    + atan2(playerCenter.y - spriteCenter.y, playerCenter.x - spriteCenter.x);
+                correctAngleManyIter(rotationDiff);
+
+                if (rotationDiff > PI_F / 2.0f || rotationDiff < -PI_F / 2.0f)
                 {
-                    skipCount++;
+                    viewRange = 0.2f;
+                }*/
+
+                if (hypot(playerCenter.x - spriteCenter.x, playerCenter.y - spriteCenter.y)
+                    > sprite->getRange() + static_cast<float>(m_window->getHeight()) * m_window->getScale() * viewRange)
+                {
                     continue;
                 }
             }
@@ -515,7 +446,6 @@ void Scene::renderSprites(
             }
         }
     }
-    //std::cerr << sprites.size() << " " << skipCount << '\n';
 
     for (auto& va : vertexArrays)
         va.createSubData();

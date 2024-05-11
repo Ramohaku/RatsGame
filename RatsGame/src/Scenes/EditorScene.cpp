@@ -4,7 +4,7 @@
 using json = nlohmann::json;
 
 EditorScene::EditorScene(Window* window, AppSceneData& appSceneData)
-	: Scene(window, appSceneData),
+	: Scene(window, appSceneData, true),
 	m_textureNames{ "TextureSprite", "Player", "EnemyRatWatcher", "EnemyRatSniffer" }
 	//m_textures(textures)
 {
@@ -14,11 +14,32 @@ EditorScene::EditorScene(Window* window, AppSceneData& appSceneData)
 
 void EditorScene::onUpdate(float deltaTime)
 {
-	if (m_player)
+	bool escPressed = glfwGetKey(m_window->getGlfwWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS;
+
+	if (m_paused)
 	{
-		m_player->onUpdate(deltaTime);
-		m_window->setCenter(m_player->getCenter());
+		if (escPressed && !m_escPrePressed)
+		{
+			onPauseEnd();
+			m_paused = false;
+		}
 	}
+	else
+	{
+		if (m_player)
+		{
+			m_player->onUpdate(deltaTime);
+			m_window->updateView(m_player->getCenter(), m_player->getRotation() + PI_F / 2.0f);
+		}
+
+		if (escPressed && !m_escPrePressed)
+		{
+			onPauseStart();
+			m_paused = true;
+		}
+	}
+	
+	m_escPrePressed = escPressed;
 
 	updateLights();
 }

@@ -160,6 +160,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Sound2D.cpp" />
     <ClCompile Include="src\Scenes\EditorScene.cpp" />
     <ClCompile Include="src\Scenes\LevelScenes.cpp" />
     <ClCompile Include="src\Scenes\MainMenuScene.cpp" />
@@ -197,6 +198,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Piotr\c++\Omega\Omega\include\nlohmann\json.hpp" />
     <ClInclude Include="..\..\..\..\Piotr\c++\Omega\Omega\include\nlohmann\json_fwd.hpp" />
+    <ClInclude Include="src\Sound2D.h" />
     <ClInclude Include="src\Scenes\EditorScene.h" />
     <ClInclude Include="src\Scenes\LevelScenes.h" />
     <ClInclude Include="src\Scenes\MainMenuScene.h" />

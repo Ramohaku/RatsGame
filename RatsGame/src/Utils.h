@@ -41,6 +41,7 @@ struct Vec2
 	}
 };
 using Vec2f = Vec2<float>;
+using Vec2d = Vec2<double>;
 
 template <typename T>
 struct Vec3
@@ -84,3 +85,25 @@ size_t getClosest(const std::array<float, COL_RAYS>& arr, size_t index1, size_t 
 size_t findClosest(const std::array<float, COL_RAYS>& arr, float target);
 
 int randInt(int min, int max);
+
+inline float dotProduct(const Vec2f& vec1, const Vec2f& vec2)
+{
+	return vec1.x * vec2.x + vec1.y * vec2.y;
+}
+
+inline float magnitude(const Vec2f& vec)
+{
+	return sqrt(vec.x * vec.x + vec.y * vec.y);
+}
+
+float getAngleBetweenLineAndSegment(float lineAngle, const Vec2f& pos1, const Vec2f& pos2);
+
+void correctAngleTooSmall(float& angle);
+void correctAngleTooBig(float& angle);
+void correctAngleOneIter(float& angle);
+void correctAngleManyIter(float& angle);
+
+inline float crossProduct(const Vec2f& vec1, const Vec2f& vec2)
+{
+	return vec1.x * vec2.y - vec1.y * vec2.x;
+}

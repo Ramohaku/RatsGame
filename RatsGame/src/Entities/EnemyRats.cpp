@@ -305,6 +305,10 @@ EnemyRatWatcher::EnemyRatWatcher(const SpriteData& spriteData, Player* playerPtr
 	Sprite(spriteData), m_soundBuffers(soundBuffers)
 {
 	m_sound.setBuffer(*soundBuffers[randInt(0, soundBuffers.size() - 1)]);
+	m_sound2.setBuffer(*soundBuffers[randInt(0, soundBuffers.size() - 1)]);
+
+	m_sound.setPosition(-1.0f, 0.0f, 0.0f);
+	m_sound2.setPosition(1.0f, 0.0f, 0.0f);
 }
 
 void EnemyRatWatcher::managePlayer(float deltaTime, float dist, float angle)
@@ -357,8 +361,11 @@ void EnemyRatWatcher::managePlayer(float deltaTime, float dist, float angle)
 		{
 			if (m_sound.getStatus() != sf::Sound::Playing)
 			{
-				m_sound.setBuffer(*m_soundBuffers[randInt(0, m_soundBuffers.size() - 1)]);
+				int randIndex = randInt(0, m_soundBuffers.size() - 1);
+				m_sound.setBuffer(*m_soundBuffers[randIndex]);
 				m_sound.play();
+				m_sound2.setBuffer(*m_soundBuffers[randIndex]);
+				m_sound2.play();
 			}
 
 			updateRaysForPlayer(deltaTime, dist, angle); // follow the player

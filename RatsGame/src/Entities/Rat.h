@@ -17,8 +17,12 @@ public:
 	virtual ~Rat() {}
 
 	virtual void onUpdate(float deltaTime) override;
+
+	inline void setDestRotation(float destRotation) { m_destRotation = destRotation; }
+	inline float getDestRotation() const { return m_destRotation; }
 public:
 	static std::vector<Sprite*> s_collidingSprites;
+	//static std::vector<std::vector<Vec2f>> s_colliders;
 protected:
 	RatData m_ratData;
 	float m_currentSpeed = 0.0f;

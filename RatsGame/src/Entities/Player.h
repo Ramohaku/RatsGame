@@ -33,6 +33,15 @@ public:
 	inline float getLightStrength() const { return m_lightStrength; }
 private:
 	bool canMoveTo(const Vec2f& destPoint) const;
+
+	struct CanMove
+	{
+		bool isTrue = false;
+		float collisionAngle = 0.0f;
+		float directionAngle = 0.0f;
+	};
+
+	CanMove canMoveDest(const Vec2f& destPoint) const;
 	
 	enum MoveDir
 	{
@@ -42,9 +51,16 @@ private:
 		BottomRight, Bottom, BottomLeft,
 		Left
 	};
+	bool tryMoveDest(float deltaTime);
+	//void moveDestIfPossible(float deltaTime);
+
+	bool tryMove(MoveDir moveDir, float deltaTime);
+	void moveIfPossible(MoveDir moveDir, float deltaTime);
 	bool tryMoveTo(MoveDir moveDir, float deltaTime);
 	void moveToIfPossible(MoveDir moveDir, float deltaTime);
 private:
 	Window* m_windowPtr;
 	float m_lightStrength;
+
+	float m_lastMouseX = 0.0f;
 };

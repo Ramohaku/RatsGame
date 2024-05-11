@@ -102,6 +102,7 @@ private:
 private:
 	std::vector<sf::SoundBuffer*> m_soundBuffers;
 	sf::Sound m_sound;
+	sf::Sound m_sound2;
 };
 
 class EnemyRatSniffer : public EnemyRat

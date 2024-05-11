@@ -36,7 +36,7 @@ protected:
 		bool blocking = false;
 	};
 public:
-	Scene(Window* window, AppSceneData& appSceneData);
+	Scene(Window* window, AppSceneData& appSceneData, bool pauseable = false);
 	Scene(const Scene&) = delete;
 	Scene(Scene&&) = delete;
 	virtual ~Scene();
@@ -47,12 +47,6 @@ public:
 	Player* getPlayer() { return m_player; }
 
 	void createLight(const Light& light);
-	Player* createPlayer(const Vec2f& center, Texture* texture);
-	TextureSprite* createTextureSpriteBack(const Vec2f& center, const Vec2f& halfSize, float rotation, Texture* texture);
-	TextureSprite* createTextureBlockBack(const Vec2f& center, const Vec2f& halfSize, float rotation, Texture* texture);
-	EnemyRatWatcher* createEnemyRatWatcher(const Vec2f& center, const Vec2f& halfSize, float rotation, Texture* texture);
-	EnemyRatSniffer* createEnemyRatSniffer(const Vec2f& center, const Vec2f& halfSize, float rotation, Texture* texture);
-	UISprite* createUISprite(const Vec2f& center, const Vec2f& halfSize, Texture* texture, UIPos uiPos);
 	Button* createButton(const Vec2f& center, const Vec2f& halfSize, Texture* texture, UIPos uiPos, const ButtonPresses& buttonPresses);
 	void addTargetPoint(EnemyRatSniffer* rat, const Vec2f& point);
 
@@ -61,6 +55,9 @@ public:
 protected:
 	void updateLights();
 	void loadEntities(const char* fileName);
+
+	virtual void onPauseStart() {}
+	virtual void onPauseEnd() {}
 private:
 	template <typename VertexType, typename SpriteType>
 	void renderSprites(
@@ -82,4 +79,8 @@ protected:
 	std::vector<std::unique_ptr<UISprite>> m_uiSprites;
 
 	std::unordered_map<std::string, TextureSprite*> m_namedSprites;
+
+	bool m_pauseable;
+	bool m_paused = false;
+	bool m_escPrePressed = false;
 };

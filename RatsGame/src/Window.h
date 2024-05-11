@@ -17,7 +17,7 @@ public:
 	void clear(float r = 0.0f, float g = 0.0f, float b = 0.0f, float a = 1.0f);
 	void display();
 
-	void setCenter(const Vec2f& center);
+	void updateView(const Vec2f& center, float angle);
 	void setScale(float scale);
 
 	inline GLFWwindow* getGlfwWindow() const { return m_glfwWindow; }
@@ -26,6 +26,10 @@ public:
 	inline const glm::mat4& getView() const { return m_view; }
 	inline int getWidth() const { return m_width; }
 	inline int getHeight() const { return m_height; }
+
+	static void mouseCallback(GLFWwindow* window, double pos_x, double pos_y);
+public:
+	static Vec2d s_mousePos;
 private:
 	void initWindow();
 	void createWindow(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share);

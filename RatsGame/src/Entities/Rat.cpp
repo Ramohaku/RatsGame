@@ -2,6 +2,7 @@
 #include "Rat.h"
 
 std::vector<Sprite*> Rat::s_collidingSprites;
+//std::vector<std::vector<Vec2f>> Rat::s_colliders;
 
 Rat::Rat(const SpriteData& spriteData, const RatData& ratData)
 	: Character(spriteData),
@@ -21,17 +22,11 @@ void Rat::onUpdate(float deltaTime)
 	Character::onUpdate(deltaTime);
 
 	float diff = m_spriteData.rotation - m_destRotation;
-	if (diff < -PI_F)
-		diff += 2.0f * PI_F;
-	else if (diff > PI_F)
-		diff -= 2.0f * PI_F;
+	correctAngleOneIter(diff);
 
 	m_spriteData.rotation -= diff * deltaTime * 8.0f;
 
-	if (m_spriteData.rotation < -PI_F)
-		m_spriteData.rotation += 2.0f * PI_F;
-	if (m_spriteData.rotation > PI_F)
-		m_spriteData.rotation -= 2.0f * PI_F;
+	correctAngleOneIter(m_spriteData.rotation);
 
 	if (diff > 0.0f)
 	{
