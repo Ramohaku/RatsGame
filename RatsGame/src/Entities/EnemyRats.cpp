@@ -300,15 +300,10 @@ void EnemyRat::updateMoveToPlayer(float deltaTime)
 	}
 }
 
-EnemyRatWatcher::EnemyRatWatcher(const SpriteData& spriteData, Player* playerPtr, std::vector<sf::SoundBuffer*>&& soundBuffers)
+EnemyRatWatcher::EnemyRatWatcher(const SpriteData& spriteData, Player* playerPtr, std::vector<SoundBuffer*>&& soundBuffers)
 	: EnemyRat(spriteData, RatData{ 4.0f, 8.0f, 13.0f }, playerPtr),
-	Sprite(spriteData), m_soundBuffers(soundBuffers)
+	Sprite(spriteData), m_soundBuffers(soundBuffers), m_sound(*soundBuffers[randInt(0, soundBuffers.size() - 1)])
 {
-	m_sound.setBuffer(*soundBuffers[randInt(0, soundBuffers.size() - 1)]);
-	m_sound2.setBuffer(*soundBuffers[randInt(0, soundBuffers.size() - 1)]);
-
-	m_sound.setPosition(-1.0f, 0.0f, 0.0f);
-	m_sound2.setPosition(1.0f, 0.0f, 0.0f);
 }
 
 void EnemyRatWatcher::managePlayer(float deltaTime, float dist, float angle)
@@ -359,13 +354,11 @@ void EnemyRatWatcher::managePlayer(float deltaTime, float dist, float angle)
 
 		if (playerLook)
 		{
-			if (m_sound.getStatus() != sf::Sound::Playing)
+			if (!m_sound.isPlaying())
 			{
 				int randIndex = randInt(0, m_soundBuffers.size() - 1);
 				m_sound.setBuffer(*m_soundBuffers[randIndex]);
 				m_sound.play();
-				m_sound2.setBuffer(*m_soundBuffers[randIndex]);
-				m_sound2.play();
 			}
 
 			updateRaysForPlayer(deltaTime, dist, angle); // follow the player
@@ -379,6 +372,8 @@ void EnemyRatWatcher::managePlayer(float deltaTime, float dist, float angle)
 	{
 		updateTargets(deltaTime);
 	}
+
+	m_sound.updatePosition(dist, angle - m_playerPtr->getRotation());
 
 	updateMoveToPlayer(deltaTime);
 }

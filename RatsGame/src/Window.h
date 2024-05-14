@@ -2,7 +2,7 @@
 
 #include "Utils.h"
 
-#define ENABLE_ANTIALIASING 0
+#define ENABLE_ANTIALIASING 1
 
 class Window
 {
@@ -27,9 +27,6 @@ public:
 	inline int getWidth() const { return m_width; }
 	inline int getHeight() const { return m_height; }
 
-	static void mouseCallback(GLFWwindow* window, double pos_x, double pos_y);
-public:
-	static Vec2d s_mousePos;
 private:
 	void initWindow();
 	void createWindow(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share);

@@ -93,13 +93,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SFML_STATIC;GLEW_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>src/vendor;src;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\SFML\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src/vendor;src;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\OpenAL\include;$(SolutionDir)Dependencies\libsndfile\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;sfml-audio-s-d.lib;sfml-system-s-d.lib;openal32.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\lib-vc2022\$(Platform);$(SolutionDir)Dependencies\GLEW\lib\Release\$(Platform);$(SolutionDir)Dependencies\SFML\lib\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;OpenAL32.lib;sndfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\lib-vc2022\$(Platform);$(SolutionDir)Dependencies\GLEW\lib\Release\$(Platform);$(SolutionDir)Dependencies\OpenAL\lib\$(Configuration);$(SolutionDir)Dependencies\libsndfile\lib\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -110,15 +110,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SFML_STATIC;GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>src/vendor;src;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\SFML\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src/vendor;src;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\OpenAL\include;$(SolutionDir)Dependencies\libsndfile\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;sfml-audio-s.lib;sfml-system-s.lib;openal32.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\lib-vc2022\$(Platform);$(SolutionDir)Dependencies\GLEW\lib\Release\$(Platform);$(SolutionDir)Dependencies\SFML\lib\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;OpenAL32.lib;sndfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\lib-vc2022\$(Platform);$(SolutionDir)Dependencies\GLEW\lib\Release\$(Platform);$(SolutionDir)Dependencies\OpenAL\lib\$(Configuration);$(SolutionDir)Dependencies\libsndfile\lib\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -127,15 +127,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SFML_STATIC;GLEW_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>src/vendor;src;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\SFML\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src/vendor;src;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\OpenAL\include;$(SolutionDir)Dependencies\libsndfile\include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;sfml-audio-s-d.lib;sfml-system-s-d.lib;openal32.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\lib-vc2022\$(Platform);$(SolutionDir)Dependencies\GLEW\lib\Release\$(Platform);$(SolutionDir)Dependencies\SFML\lib\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;OpenAL32.lib;sndfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\lib-vc2022\$(Platform);$(SolutionDir)Dependencies\GLEW\lib\Release\$(Platform);$(SolutionDir)Dependencies\OpenAL\lib\$(Configuration);$(SolutionDir)Dependencies\libsndfile\lib\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -146,7 +146,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SFML_STATIC;GLEW_STATIC;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>src/vendor;src;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\SFML\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src/vendor;src;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\OpenAL\include;$(SolutionDir)Dependencies\libsndfile\include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -155,12 +155,11 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;sfml-audio-s.lib;sfml-system-s.lib;openal32.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\lib-vc2022\$(Platform);$(SolutionDir)Dependencies\GLEW\lib\Release\$(Platform);$(SolutionDir)Dependencies\SFML\lib\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;OpenAL32.lib;sndfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\lib-vc2022\$(Platform);$(SolutionDir)Dependencies\GLEW\lib\Release\$(Platform);$(SolutionDir)Dependencies\OpenAL\lib\$(Configuration);$(SolutionDir)Dependencies\libsndfile\lib\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Sound2D.cpp" />
     <ClCompile Include="src\Scenes\EditorScene.cpp" />
     <ClCompile Include="src\Scenes\LevelScenes.cpp" />
     <ClCompile Include="src\Scenes\MainMenuScene.cpp" />
@@ -177,6 +176,7 @@
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Debug.cpp" />
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\Sound.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -198,7 +198,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Piotr\c++\Omega\Omega\include\nlohmann\json.hpp" />
     <ClInclude Include="..\..\..\..\Piotr\c++\Omega\Omega\include\nlohmann\json_fwd.hpp" />
-    <ClInclude Include="src\Sound2D.h" />
     <ClInclude Include="src\Scenes\EditorScene.h" />
     <ClInclude Include="src\Scenes\LevelScenes.h" />
     <ClInclude Include="src\Scenes\MainMenuScene.h" />
@@ -214,6 +213,7 @@
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Debug.h" />
+    <ClInclude Include="src\Sound.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\Utils.h" />
     <ClInclude Include="src\vendor\imgui\imconfig.h" />

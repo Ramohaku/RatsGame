@@ -625,8 +625,8 @@
             {
                 "blocking": false,
                 "center": {
-                    "x": -0.42788392305374146,
-                    "y": 0.19469061493873596
+                    "x": 0.0,
+                    "y": 0.0
                 },
                 "entityType": 1,
                 "flipHorizontal": 1.0,
@@ -637,7 +637,7 @@
                 },
                 "layer": 2,
                 "name": "",
-                "rotation": -1.6233000755310059,
+                "rotation": -0.9881539940834045,
                 "shadows": true,
                 "texPartIndex": {
                     "x": 0.0,
@@ -763,6 +763,6 @@
                 "vanish": 0.13899999856948853
             }
         ],
-        "windowScale": 0.019999999552965164
+        "windowScale": 0.014000000432133675
     }
 }

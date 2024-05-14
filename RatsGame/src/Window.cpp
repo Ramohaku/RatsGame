@@ -6,8 +6,6 @@
 static constexpr int SAMPLES = 8;
 #endif
 
-Vec2d Window::s_mousePos{};
-
 Window::Window(int width, int height, const char* title, float scale)
     : m_width(width), m_height(height), m_scale(scale),
     m_proj(glm::ortho(0.0f,
@@ -47,12 +45,6 @@ Window::Window(const char* title, float scale, bool fullscreen)
     createWindow(m_width, m_height, title, fullscreen ? monitor : nullptr, nullptr);
 }
 
-void Window::mouseCallback(GLFWwindow* window, double pos_x, double pos_y)
-{
-    s_mousePos.x = pos_x;
-    s_mousePos.y = pos_y;
-}
-
 void Window::initWindow()
 {
     if (!glfwInit())
@@ -82,8 +74,6 @@ void Window::createWindow(int width, int height, const char* title, GLFWmonitor*
 
     glfwMakeContextCurrent(m_glfwWindow);
     glfwSwapInterval(1);
-
-    glfwSetCursorPosCallback(m_glfwWindow, Window::mouseCallback);
 }
 
 Window::~Window()

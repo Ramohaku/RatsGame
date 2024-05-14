@@ -338,7 +338,7 @@ void Scene::loadEntities(const char* fileName)
             }
             case 2:
             {
-                std::vector<sf::SoundBuffer*> buffers = {
+                std::vector<SoundBuffer*> buffers = {
                     &m_appSceneData.soundBuffers.at("RatSound1"),
                     &m_appSceneData.soundBuffers.at("RatSound2"),
                     &m_appSceneData.soundBuffers.at("RatSound3"),

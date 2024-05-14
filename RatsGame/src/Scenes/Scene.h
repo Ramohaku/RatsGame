@@ -10,7 +10,7 @@ struct AppSceneData
 	std::unordered_map<std::string, std::unique_ptr<Texture>> textures;
 	GLint maxTextureUnits = 0;
 
-	std::unordered_map<std::string, sf::SoundBuffer> soundBuffers;
+	std::unordered_map<std::string, SoundBuffer> soundBuffers;
 
 	std::unique_ptr<Shader> textureShader;
 	std::unique_ptr<Shader> shadowShader;

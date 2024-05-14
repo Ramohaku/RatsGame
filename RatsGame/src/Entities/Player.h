@@ -63,4 +63,5 @@ private:
 	float m_lightStrength;
 
 	float m_lastMouseX = 0.0f;
+	bool m_preDown = false;
 };

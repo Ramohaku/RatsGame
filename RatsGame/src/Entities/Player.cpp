@@ -5,123 +5,6 @@
 #define SQRT2 1.41421356237f
 #define SQRT2_2 SQRT2 / 2.0f
 
-/*
-Player::Player(const Vec2f& center, const Vec2f& halfSize, float rotation,
-	Texture* texturePtr,
-	const Vec2f& texPartScale, const Vec2f& texPartIndex, GLFWwindow* windowPtr)
-	: Character(center, halfSize, rotation, texturePtr, texPartScale, texPartIndex),
-	TextureSprite(center, halfSize, rotation, texturePtr, texPartScale, texPartIndex),
-	Sprite(center, halfSize, rotation, texturePtr, texPartScale, texPartIndex),
-	m_moveIndices{ 0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 3.0f, 2.0f, 1.0f, 0.0f, 5.0f, 6.0f, 7.0f, 8.0f, 7.0f, 6.0f, 5.0f },
-	m_moveAnim{ m_moveIndices, 16, 25.0f }, m_windowPtr(windowPtr)
-{
-}
-
-void Player::onUpdate(float deltaTime)
-{
-	Character::onUpdate(deltaTime);
-
-	const float walkSpeed = 7.0f;
-	const float sneakSpeed = 3.5f;
-	const float runSpeed = 18.0f;
-
-	bool sneak = glfwGetKey(m_windowPtr, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS
-		|| glfwGetKey(m_windowPtr, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS;
-	bool run = glfwGetKey(m_windowPtr, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS
-		|| glfwGetKey(m_windowPtr, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
-
-	const float speed = sneak ? sneakSpeed : (run ? runSpeed : walkSpeed);
-	m_moveAnim.speed = speed * 3.8f;
-
-	bool left = glfwGetKey(m_windowPtr, GLFW_KEY_A) == GLFW_PRESS
-		|| glfwGetKey(m_windowPtr, GLFW_KEY_LEFT) == GLFW_PRESS;
-	bool right = glfwGetKey(m_windowPtr, GLFW_KEY_D) == GLFW_PRESS
-		|| glfwGetKey(m_windowPtr, GLFW_KEY_RIGHT) == GLFW_PRESS;
-	bool up = glfwGetKey(m_windowPtr, GLFW_KEY_W) == GLFW_PRESS
-		|| glfwGetKey(m_windowPtr, GLFW_KEY_UP) == GLFW_PRESS;
-	bool down = glfwGetKey(m_windowPtr, GLFW_KEY_S) == GLFW_PRESS
-		|| glfwGetKey(m_windowPtr, GLFW_KEY_DOWN) == GLFW_PRESS;
-
-	bool upLeft = up && left;
-	bool upRight = up && right;
-	bool downLeft = down && left;
-	bool downRight = down && right;
-
-	bool moving = false;
-
-	if (upLeft && !right && !down)
-	{
-		m_center.x -= speed * deltaTime * SQRT2_2;
-		m_center.y += speed * deltaTime * SQRT2_2;
-		moving = true;
-		m_flipHorizontal = 1.0f;
-		m_texPartIndex.y = 0.0f;
-	}
-	else if (upRight && !left && !down)
-	{
-		m_center.x += speed * deltaTime * SQRT2_2;
-		m_center.y += speed * deltaTime * SQRT2_2;
-		moving = true;
-		m_flipHorizontal = -1.0f;
-		m_texPartIndex.y = 0.0f;
-	}
-	else if (downLeft && !right && !up)
-	{
-		m_center.x -= speed * deltaTime * SQRT2_2;
-		m_center.y -= speed * deltaTime * SQRT2_2;
-		moving = true;
-		m_flipHorizontal = 1.0f;
-		m_texPartIndex.y = 1.0f;
-	}
-	else if (downRight && !left && !up)
-	{
-		m_center.x += speed * deltaTime * SQRT2_2;
-		m_center.y -= speed * deltaTime * SQRT2_2;
-		moving = true;
-		m_flipHorizontal = -1.0f;
-		m_texPartIndex.y = 1.0f;
-	}
-	else if (left && !right)
-	{
-		m_center.x -= speed * deltaTime;
-		moving = true;
-		m_flipHorizontal = 1.0f;
-	}
-	else if (right && !left)
-	{
-		m_center.x += speed * deltaTime;
-		moving = true;
-		m_flipHorizontal = -1.0f;
-	}
-	else if (up && !down)
-	{
-		m_center.y += speed * deltaTime;
-		moving = true;
-		m_texPartIndex.y = 0.0f;
-	}
-	else if (down && !up)
-	{
-		m_center.y -= speed * deltaTime;
-		moving = true;
-		m_texPartIndex.y = 1.0f;
-	}
-
-	if (moving)
-	{
-		if (!m_currentAnim)
-			startAnimation(&m_moveAnim);
-	}
-	else
-	{
-		if (m_currentAnim)
-		{
-			stopAnimation();
-			m_texPartIndex.x = 0.0f;
-		}
-	}
-}
-*/
-
 Player::Player(const SpriteData& spriteData, Window* windowPtr)
 	: Rat(spriteData, RatData{ 3.5f, 7.0f, 15.0f }),
 	Sprite(spriteData),
@@ -242,6 +125,13 @@ void Player::onUpdate(float deltaTime)
 	{
 		tryMoveDest(deltaTime);
 	}
+	else if (down && !m_preDown)
+	{
+		m_destRotation = m_destRotation - PI_F;
+		correctAngleTooSmall(m_destRotation);
+	}
+
+	m_preDown = down;
 
 
 

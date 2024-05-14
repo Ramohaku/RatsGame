@@ -1,6 +1,7 @@
 #pragma once
 #include "Player.h"
 #include "Debug.h"
+#include "Sound.h"
 
 #define DEBUG_LINES 0
 
@@ -91,7 +92,7 @@ protected:
 class EnemyRatWatcher : public EnemyRat
 {
 public:
-	EnemyRatWatcher(const SpriteData& spriteData, Player* playerPtr, std::vector<sf::SoundBuffer*>&& soundBuffers);
+	EnemyRatWatcher(const SpriteData& spriteData, Player* playerPtr, std::vector<SoundBuffer*>&& soundBuffers);
 	EnemyRatWatcher(const EnemyRatWatcher&) = delete;
 	EnemyRatWatcher(EnemyRatWatcher&&) = delete;
 	~EnemyRatWatcher() {}
@@ -100,9 +101,8 @@ public:
 private:
 	void updateNearPlayer(float deltaTime, float dist, float angle) override;
 private:
-	std::vector<sf::SoundBuffer*> m_soundBuffers;
-	sf::Sound m_sound;
-	sf::Sound m_sound2;
+	std::vector<SoundBuffer*> m_soundBuffers;
+	Sound m_sound;
 };
 
 class EnemyRatSniffer : public EnemyRat

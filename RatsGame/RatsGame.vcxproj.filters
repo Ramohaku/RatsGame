@@ -105,7 +105,7 @@
     <ClCompile Include="src\Scenes\EditorScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sound2D.cpp">
+    <ClCompile Include="src\Sound.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -215,7 +215,7 @@
     <ClInclude Include="src\vendor\nlohmann\json_fwd.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sound2D.h">
+    <ClInclude Include="src\Sound.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

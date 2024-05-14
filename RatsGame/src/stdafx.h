@@ -9,7 +9,9 @@
 
 #include "nlohmann/json.hpp"
 
-#include <SFML/Audio.hpp>
+#include <AL/al.h>
+#include <AL/alc.h>
+#include <sndfile.h>
 
 #include <iostream>
 
