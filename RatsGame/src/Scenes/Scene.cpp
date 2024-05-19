@@ -343,7 +343,7 @@ void Scene::loadEntities(const char* fileName)
                 using namespace std::string_literals;
                 for (int i = 0; i < RAT_SOUNDS_COUNT; i++)
                 {
-                    const auto iStr = std::to_string(i);
+                    const auto iStr = std::to_string(i + 1);
                     buffers[i] = &m_appSceneData.soundBuffers.at("RatSound"s + iStr);
                 }
 
