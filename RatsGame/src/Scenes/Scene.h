@@ -5,6 +5,8 @@
 #include "Entities/Light.h"
 #include "Entities/UI/UISprite.h"
 
+#define RAT_SOUNDS_COUNT 23
+
 struct AppSceneData
 {
 	std::unordered_map<std::string, std::unique_ptr<Texture>> textures;
@@ -83,4 +85,5 @@ protected:
 	bool m_pauseable;
 	bool m_paused = false;
 	bool m_escPrePressed = false;
+	bool m_rangeOptimize = true;
 };

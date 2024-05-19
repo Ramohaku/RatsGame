@@ -32,4 +32,6 @@ public:
 	~Level2() {}
 
 	void onUpdate(float deltaTime) override;
+private:
+	Sound m_lightholderSound;
 };

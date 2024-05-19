@@ -29,6 +29,60 @@
                 "textureName": "Level1_2_floor"
             },
             {
+                "blocking": false,
+                "center": {
+                    "x": -18.0,
+                    "y": 0.0
+                },
+                "entityType": 0,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 10.0,
+                    "y": 2.0
+                },
+                "layer": 0,
+                "name": "",
+                "rotation": 0.0,
+                "shadows": false,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureName": "TestBlock3"
+            },
+            {
+                "blocking": false,
+                "center": {
+                    "x": -43.0,
+                    "y": 10.0
+                },
+                "entityType": 0,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 15.0,
+                    "y": 20.0
+                },
+                "layer": 0,
+                "name": "",
+                "rotation": 0.0,
+                "shadows": false,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureName": "TestBlock3"
+            },
+            {
                 "blocking": true,
                 "center": {
                     "x": 0.0,
@@ -42,7 +96,7 @@
                     "y": 1.100000023841858
                 },
                 "layer": 1,
-                "name": "",
+                "name": "lightholder",
                 "rotation": 0.0,
                 "shadows": false,
                 "texPartIndex": {
@@ -83,10 +137,64 @@
                 "textureName": "FastDoor"
             },
             {
+                "blocking": true,
+                "center": {
+                    "x": -18.0,
+                    "y": 6.0
+                },
+                "entityType": 0,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 10.0,
+                    "y": 4.0
+                },
+                "layer": 1,
+                "name": "",
+                "rotation": 0.0,
+                "shadows": false,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureName": "TestBlock2"
+            },
+            {
                 "blocking": false,
                 "center": {
-                    "x": 7.108161449432373,
-                    "y": -4.094961166381836
+                    "x": -18.0,
+                    "y": -6.0
+                },
+                "entityType": 0,
+                "flipHorizontal": 1.0,
+                "flipVertical": 1.0,
+                "halfSize": {
+                    "x": 10.0,
+                    "y": 4.0
+                },
+                "layer": 1,
+                "name": "",
+                "rotation": 0.0,
+                "shadows": true,
+                "texPartIndex": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "texPartScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureName": "TestBlock2"
+            },
+            {
+                "blocking": false,
+                "center": {
+                    "x": 6.0096516609191895,
+                    "y": -3.8629887104034424
                 },
                 "entityType": 1,
                 "flipHorizontal": 1.0,
@@ -97,7 +205,7 @@
                 },
                 "layer": 2,
                 "name": "",
-                "rotation": -2.879429578781128,
+                "rotation": -1.5219038724899292,
                 "shadows": true,
                 "texPartIndex": {
                     "x": 0.0,
@@ -124,8 +232,50 @@
                 },
                 "distance": 2.890000104904175,
                 "vanish": 0.13899999856948853
+            },
+            {
+                "active": true,
+                "center": {
+                    "x": -16.5,
+                    "y": 1.7999999523162842
+                },
+                "color": {
+                    "b": 0.0,
+                    "g": 0.38235294818878174,
+                    "r": 1.0
+                },
+                "distance": 0.30000001192092896,
+                "vanish": 0.024000000208616257
+            },
+            {
+                "active": true,
+                "center": {
+                    "x": -23.100000381469727,
+                    "y": -1.7999999523162842
+                },
+                "color": {
+                    "b": 0.0,
+                    "g": 0.3529411554336548,
+                    "r": 1.0
+                },
+                "distance": 0.30000001192092896,
+                "vanish": 0.02500000037252903
+            },
+            {
+                "active": true,
+                "center": {
+                    "x": -46.099998474121094,
+                    "y": 8.5
+                },
+                "color": {
+                    "b": 1.0,
+                    "g": 1.0,
+                    "r": 1.0
+                },
+                "distance": 4.099999904632568,
+                "vanish": 0.11900000274181366
             }
         ],
-        "windowScale": 0.02
+        "windowScale": 0.017000000923871994
     }
 }

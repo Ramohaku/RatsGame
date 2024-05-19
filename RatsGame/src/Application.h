@@ -52,4 +52,7 @@ private:
 
 	std::unique_ptr<Shader> m_screenShader;
 	std::unique_ptr<VertexArray<ScreenVertex>> m_screenVertexArray;
+
+	ALCdevice* m_soundDevice = nullptr;
+	ALCcontext* m_soundContext = nullptr;
 };

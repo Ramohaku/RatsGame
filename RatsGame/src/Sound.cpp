@@ -36,6 +36,11 @@ bool loadSound(const char* filepath, ALuint* buffer)
     return true;
 }
 
+Sound::Sound()
+{
+    alGenSources(2, m_sources);
+}
+
 Sound::Sound(const SoundBuffer& buffer)
 {
     alGenSources(2, m_sources);
@@ -70,11 +75,11 @@ bool Sound::isPlaying() const
 
 void Sound::updatePosition(float dist, float angle)
 {
-    float dx = cos(angle);
-    float dy = sin(angle);
+    float c = cos(angle);
+    float s = sin(angle);
 
-    const ALfloat position1[] = { -dx, 0.0f, -dy };
-    const ALfloat position2[] = { dx, 0.0f, dy };
+    const ALfloat position1[] = { s, 0.0f, c };
+    const ALfloat position2[] = { -s, 0.0f, -c };
 
     alSourcefv(m_sources[0], AL_POSITION, position1);
     alSourcefv(m_sources[1], AL_POSITION, position2);

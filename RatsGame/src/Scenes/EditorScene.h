@@ -28,6 +28,8 @@ private:
 	const char* m_textureNames[4];
 	float m_windowScale = 0.03f;
 
+	Vec2f m_viewCenter{};
+
 	bool m_allLight = false;
 };
 

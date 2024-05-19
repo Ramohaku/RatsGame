@@ -152,7 +152,7 @@ void Scene::updateLights()
     {
         float active = static_cast<float>(light.active);
 
-        if (m_player)
+        if (m_player && m_rangeOptimize)
         {
             const auto& center = m_player->getCenter();
             const float d = hypot(light.center.x - m_player->getCenter().x, light.center.y - m_player->getCenter().y);
@@ -338,16 +338,15 @@ void Scene::loadEntities(const char* fileName)
             }
             case 2:
             {
-                std::vector<SoundBuffer*> buffers = {
-                    &m_appSceneData.soundBuffers.at("RatSound1"),
-                    &m_appSceneData.soundBuffers.at("RatSound2"),
-                    &m_appSceneData.soundBuffers.at("RatSound3"),
-                    &m_appSceneData.soundBuffers.at("RatSound4"),
-                    &m_appSceneData.soundBuffers.at("RatSound5"),
-                    &m_appSceneData.soundBuffers.at("RatSound6"),
-                    &m_appSceneData.soundBuffers.at("RatSound7"),
-                    &m_appSceneData.soundBuffers.at("RatSound8"),
-                };
+                std::vector<SoundBuffer*> buffers(RAT_SOUNDS_COUNT);
+                
+                using namespace std::string_literals;
+                for (int i = 0; i < RAT_SOUNDS_COUNT; i++)
+                {
+                    const auto iStr = std::to_string(i);
+                    buffers[i] = &m_appSceneData.soundBuffers.at("RatSound"s + iStr);
+                }
+
                 auto sprite = std::make_unique<EnemyRatWatcher>(spriteData, m_player, std::move(buffers));
                 if (shadows)
                     for (int i = 0; i < m_lights.size(); i++)
@@ -398,7 +397,7 @@ void Scene::renderSprites(
         size_t index = 0;
         for (auto& sprite : sprites)
         {
-            if (m_player)
+            if (m_player && m_rangeOptimize)
             {
                 const Vec2f& playerCenter = m_player->getCenter();
                 const Vec2f& spriteCenter = sprite->getCenter();
@@ -414,8 +413,10 @@ void Scene::renderSprites(
                     viewRange = 0.2f;
                 }*/
 
-                if (hypot(playerCenter.x - spriteCenter.x, playerCenter.y - spriteCenter.y)
-                    > sprite->getRange() + static_cast<float>(m_window->getHeight()) * m_window->getScale() * viewRange)
+                const float distance = hypot(playerCenter.x - spriteCenter.x, playerCenter.y - spriteCenter.y);
+                const float totalRange = sprite->getRange() + static_cast<float>(m_window->getHeight()) * m_window->getScale() * viewRange;
+
+                if (distance > totalRange)
                 {
                     continue;
                 }

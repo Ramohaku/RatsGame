@@ -4,7 +4,7 @@
 #include "VertexArray.h"
 
 Application::Application()
-	: m_window(/*1920, 1080,*/ "OpenGL Project", 0.03f, false),
+	: m_window(/*1920, 1080,*/ "Rats game", 0.03f, true),
     m_screenVertices{
         { Vec2f{ -1.0f, -1.0f }, Vec2f{ 0.0f, 0.0f } },
         { Vec2f{  1.0f, -1.0f }, Vec2f{ 1.0f, 0.0f } },
@@ -118,18 +118,29 @@ Application::Application()
 
     createMainMenu();
 
-    m_appSceneData.soundBuffers["RatSound1"].loadFromFile("res/audio/ratSound1.wav");
-    m_appSceneData.soundBuffers["RatSound2"].loadFromFile("res/audio/ratSound2.wav");
-    m_appSceneData.soundBuffers["RatSound3"].loadFromFile("res/audio/ratSound3.wav");
-    m_appSceneData.soundBuffers["RatSound4"].loadFromFile("res/audio/ratSound4.wav");
-    m_appSceneData.soundBuffers["RatSound5"].loadFromFile("res/audio/ratSound5.wav");
-    m_appSceneData.soundBuffers["RatSound6"].loadFromFile("res/audio/ratSound6.wav");
-    m_appSceneData.soundBuffers["RatSound7"].loadFromFile("res/audio/ratSound7.wav");
-    m_appSceneData.soundBuffers["RatSound8"].loadFromFile("res/audio/ratSound8.wav");
+    m_soundDevice = alcOpenDevice(nullptr);
+    if (!m_soundDevice)
+    {
+        std::cerr << "Cannot open OpenAL device\n";
+        return;
+    }
+
+    m_soundContext = alcCreateContext(m_soundDevice, nullptr);
+    alcMakeContextCurrent(m_soundContext);
+
+    using namespace std::string_literals;
+    for (int i = 0; i < RAT_SOUNDS_COUNT; i++)
+    {
+        const auto iStr = std::to_string(i);
+        m_appSceneData.soundBuffers["RatSound"s + iStr].loadFromFile(("res/audio/ratSound"s + iStr + ".wav").c_str());
+    }
 }
 
 Application::~Application()
 {
+    alcMakeContextCurrent(nullptr);
+    alcDestroyContext(m_soundContext);
+    alcCloseDevice(m_soundDevice);
 }
 
 void Application::run()

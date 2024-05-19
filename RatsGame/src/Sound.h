@@ -1,4 +1,5 @@
 #pragma once
+#include "Utils.h"
 
 bool loadSound(const char* filepath, ALuint* buffer);
 
@@ -23,6 +24,7 @@ private:
 class Sound
 {
 public:
+    Sound();
     Sound(const SoundBuffer& buffer);
     ~Sound();
 

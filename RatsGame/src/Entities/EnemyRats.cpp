@@ -31,7 +31,7 @@ void EnemyRat::onUpdate(float deltaTime)
 		m_spriteData.center.y += m_currentSpeed * sin(angle) * deltaTime;
 	}
 
-	const Vec2f playerCenter = m_playerPtr->getCenter();
+	const Vec2f& playerCenter = m_playerPtr->getCenter();
 
 	// the distance between the center and the head is equal to m_spriteData.halfSize.x
 	m_headCenter.x = m_spriteData.center.x + m_spriteData.halfSize.x * cos(m_spriteData.rotation);
@@ -301,7 +301,7 @@ void EnemyRat::updateMoveToPlayer(float deltaTime)
 }
 
 EnemyRatWatcher::EnemyRatWatcher(const SpriteData& spriteData, Player* playerPtr, std::vector<SoundBuffer*>&& soundBuffers)
-	: EnemyRat(spriteData, RatData{ 4.0f, 8.0f, 13.0f }, playerPtr),
+	: EnemyRat(spriteData, RatData{ 4.0f, 7.0f, 11.0f }, playerPtr),
 	Sprite(spriteData), m_soundBuffers(soundBuffers), m_sound(*soundBuffers[randInt(0, soundBuffers.size() - 1)])
 {
 }
@@ -373,7 +373,7 @@ void EnemyRatWatcher::managePlayer(float deltaTime, float dist, float angle)
 		updateTargets(deltaTime);
 	}
 
-	m_sound.updatePosition(dist, angle - m_playerPtr->getRotation());
+	m_sound.updatePosition(dist, angle + m_playerPtr->getRotation());
 
 	updateMoveToPlayer(deltaTime);
 }

@@ -51,9 +51,28 @@ Level2::Level2(Window* window, AppSceneData& appSceneData, const std::function<v
     : Level(window, appSceneData, transitionFunction)
 {
     loadEntities("res/scenesData/level2.json");
+
+    appSceneData.soundBuffers["Glass"].loadFromFile("res/audio/f1.wav");
+    m_lightholderSound.setBuffer(appSceneData.soundBuffers.at("Glass"));
 }
 
 void Level2::onUpdate(float deltaTime)
 {
     Level::onUpdate(deltaTime);
+
+
+    const auto& lightholderCenter = m_namedSprites.at("lightholder")->getCenter();
+    const auto& playerPos = m_player->getCenter();
+
+    float dx = playerPos.x - lightholderCenter.x;
+    float dy = playerPos.y - lightholderCenter.y;
+    float dist = hypot(dx, dy);
+    float angle = atan2(dy, dx);
+
+    m_lightholderSound.updatePosition(dist, angle + m_player->getRotation());
+
+    if (!m_lightholderSound.isPlaying())
+    {
+        m_lightholderSound.play();
+    }
 }

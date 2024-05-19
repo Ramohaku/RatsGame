@@ -8,8 +8,7 @@ EditorScene::EditorScene(Window* window, AppSceneData& appSceneData)
 	m_textureNames{ "TextureSprite", "Player", "EnemyRatWatcher", "EnemyRatSniffer" }
 	//m_textures(textures)
 {
-	//createPlayer(Vec2f{ 0.0f, 0.0f }, m_textures.at("Player").get());
-	//m_currentItemsFront.push_back(1); // player
+	m_rangeOptimize = false;
 }
 
 void EditorScene::onUpdate(float deltaTime)
@@ -26,11 +25,39 @@ void EditorScene::onUpdate(float deltaTime)
 	}
 	else
 	{
-		if (m_player)
+		//if (m_player)
+		//{
+		//	m_player->onUpdate(deltaTime);
+		//	m_window->updateView(m_player->getCenter(), m_player->getRotation() + PI_F / 2.0f);
+		//}
+
+		double mouseX, mouseY;
+		glfwGetCursorPos(m_window->getGlfwWindow(), &mouseX, &mouseY);
+
+
+		constexpr double moveSpeed = 20.0;
+		constexpr double moveDist = 10.0;
+
+		if (mouseX < moveDist)
 		{
-			m_player->onUpdate(deltaTime);
-			m_window->updateView(m_player->getCenter(), m_player->getRotation() + PI_F / 2.0f);
+			m_viewCenter.x -= moveSpeed * deltaTime;
 		}
+		else if (mouseX > m_window->getWidth() - moveDist)
+		{
+			m_viewCenter.x += moveSpeed * deltaTime;
+		}
+
+		if (mouseY < moveDist)
+		{
+			m_viewCenter.y += moveSpeed * deltaTime;
+		}
+		else if (mouseY > m_window->getHeight() - moveDist)
+		{
+			m_viewCenter.y -= moveSpeed * deltaTime;
+		}
+
+		m_window->updateView(m_viewCenter, 0.0f);
+
 
 		if (escPressed && !m_escPrePressed)
 		{
