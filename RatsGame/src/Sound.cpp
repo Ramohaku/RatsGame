@@ -78,16 +78,18 @@ void Sound::updatePosition(float dist, float angle)
     float c = cos(angle);
     float s = sin(angle);
 
-    const ALfloat position1[] = { s, 0.0f, c };
-    const ALfloat position2[] = { -s, 0.0f, -c };
+    const ALfloat position1[] = { s, c, 0.0f };
+    const ALfloat position2[] = { -s, -c, 0.0f };
 
     alSourcefv(m_sources[0], AL_POSITION, position1);
     alSourcefv(m_sources[1], AL_POSITION, position2);
 
-    const ALfloat volume0 = std::max(atan(-dist / 18.0f) + 1.0f, 0.0f);
+    //const ALfloat volume0 = std::max(atan(-dist / 28.0f) + 1.0f, 0.0f);
+    const ALfloat volume0 = std::clamp(3.0f / sqrt(dist) - 0.4f, 0.0f, 1.0f);
 
-    const float base = dist / 5.0f;
-    const ALfloat volume1 = std::max(-(base * base) + 1.0f, 0.0f);
+    //const float base = dist / 8.0f;
+    //const ALfloat volume1 = std::max(-(base * base) + 1.0f, 0.0f);
+    const ALfloat volume1 = std::clamp(2.0f / dist - 0.03f, 0.0f, 1.0f);
 
     alSourcef(m_sources[0], AL_GAIN, volume0);
     alSourcef(m_sources[1], AL_GAIN, volume1);

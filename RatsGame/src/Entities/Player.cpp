@@ -252,7 +252,7 @@ Player::CanMove Player::canMoveDest(const Vec2f& destPoint) const
 			const float cp = crossProduct(segmentVec, playerVec);
 
 			if (cp >= 0.0f)
-				return CanMove{ true };
+				continue;
 
 			return CanMove{ false, getAngleBetweenLineAndSegment(-m_destRotation, intersectionPos1, intersection1Pos2), atan2(intersection1Pos2.y - intersectionPos1.y, intersection1Pos2.x - intersectionPos1.x) };
 		}
@@ -266,7 +266,7 @@ Player::CanMove Player::canMoveDest(const Vec2f& destPoint) const
 			const float cp = crossProduct(segmentVec, playerVec);
 
 			if (cp >= 0.0f)
-				return CanMove{ true };
+				continue;
 
 			return CanMove{ false, getAngleBetweenLineAndSegment(-m_destRotation, intersection2Pos2, intersectionPos1), atan2(intersectionPos1.y - intersection2Pos2.y, intersectionPos1.x - intersection2Pos2.x) };
 		}
