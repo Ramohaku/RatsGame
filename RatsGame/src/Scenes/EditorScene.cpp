@@ -68,12 +68,17 @@ void EditorScene::onUpdate(float deltaTime)
 	
 	m_escPrePressed = escPressed;
 
-	updateLights();
+	updateLights(m_appSceneData.textureEditorShader);
 }
 
 void EditorScene::onRender()
 {
-	Scene::onRender();
+	renderSprites(m_appSceneData.textureVertexArraysBack, m_textureSpritesBack, m_appSceneData.textureEditorShader.get());
+	renderSprites(m_appSceneData.shadowVertexArraysMiddle, m_shadowSpritesMiddle, m_appSceneData.shadowShader.get());
+	renderSprites(m_appSceneData.textureVertexArraysMiddle, m_textureSpritesMiddle, m_appSceneData.textureEditorShader.get());
+	renderSprites(m_appSceneData.shadowVertexArraysFront, m_shadowSpritesFront, m_appSceneData.shadowShader.get());
+	renderSprites(m_appSceneData.textureVertexArraysFront, m_textureSpritesFront, m_appSceneData.textureEditorShader.get());
+	renderSprites(m_appSceneData.uiVertexArrays, m_uiSprites, m_appSceneData.uiShader.get());
 
 	ImGui::Begin("Lights");
 
@@ -168,10 +173,10 @@ void EditorScene::onRender()
 				
 				std::unique_ptr<TextureSprite> sprite;
 				
-				const int entityType = data["entityType"].get<int>();
+				const EntityType entityType = data["entityType"].get<EntityType>();
 				switch (entityType)
 				{
-				case 1:
+				case EntityType::Player:
 				{
 					std::unique_ptr<Player> player = std::make_unique<Player>(spriteData, m_window);
 					m_player = player.get();
@@ -246,7 +251,7 @@ void EditorScene::onRender()
 				json& back = entitiesArray.emplace_back();
 				back["layer"] = 0;
 				back["name"] = ed.name;
-				back["entityType"] = ed.entityType;
+				back["entityType"] = static_cast<int>(ed.entityType);
 				back["shadows"] = ed.shadows;
 				back["blocking"] = ed.blocking;
 				back["center"]["x"] = sprite->getCenter().x;
@@ -272,7 +277,7 @@ void EditorScene::onRender()
 				json& back = entitiesArray.emplace_back();
 				back["layer"] = 1;
 				back["name"] = ed.name;
-				back["entityType"] = ed.entityType;
+				back["entityType"] = static_cast<int>(ed.entityType);
 				back["shadows"] = ed.shadows;
 				back["blocking"] = ed.blocking;
 				back["center"]["x"] = sprite->getCenter().x;
@@ -298,7 +303,7 @@ void EditorScene::onRender()
 				json& back = entitiesArray.emplace_back();
 				back["layer"] = 2;
 				back["name"] = ed.name;
-				back["entityType"] = ed.entityType;
+				back["entityType"] = static_cast<int>(ed.entityType);
 				back["shadows"] = ed.shadows;
 				back["blocking"] = ed.blocking;
 				back["center"]["x"] = sprite->getCenter().x;
@@ -345,8 +350,8 @@ void EditorScene::onRender()
 	if (ImGui::Button("Toggle all black"))
 	{
 		m_allLight = !m_allLight;
-		m_appSceneData.textureShader->bind();
-		m_appSceneData.textureShader->setUniform1i("u_AllLight", static_cast<int>(m_allLight));
+		m_appSceneData.textureEditorShader->bind();
+		m_appSceneData.textureEditorShader->setUniform1i("u_AllLight", static_cast<int>(m_allLight));
 	}
 
 	ImGui::End();
@@ -354,11 +359,27 @@ void EditorScene::onRender()
 
 void EditorScene::createImGuiEntities(std::vector<std::unique_ptr<TextureSprite>>& sprites, std::vector<ExtraData>& extraData, const std::string labelName, char* buffer)
 {
-	int i = 0;
-	for (auto& entity : sprites)
+	for (int i = 0; i < sprites.size(); i++)
 	{
+		auto& entity = sprites[i];
+
 		std::string label = labelName + ' ' + std::to_string(i);
-		ImGui::Text(label.c_str());
+		if (ImGui::Button(label.c_str()))
+		{
+			if (m_selectedTextureSprite == entity.get())
+			{
+				m_selectedTextureSprite = nullptr;
+			}
+			else
+			{
+				m_selectedTextureSprite = entity.get();
+			}
+		}
+
+		if (m_selectedTextureSprite != entity.get())
+		{
+			continue;
+		}
 
 		ImGui::InputText((label + " name: ").c_str(), extraData[i].name, 20);
 
@@ -371,17 +392,17 @@ void EditorScene::createImGuiEntities(std::vector<std::unique_ptr<TextureSprite>
 		ImGui::DragFloat((label + " flipHorizontal: ").c_str(), &spriteData.flipHorizontal, 0.1f, -1.0f, 1.0f);
 		ImGui::DragFloat((label + " flipVertical: ").c_str(), &spriteData.flipVertical, 0.1f, -1.0f, 1.0f);
 		
-		if (ImGui::Combo((label + " type").c_str(), &extraData[i].entityType, m_textureNames, IM_ARRAYSIZE(m_textureNames)))
+		if (ImGui::Combo((label + " type").c_str(), reinterpret_cast<int*>(&extraData[i].entityType), m_textureNames, IM_ARRAYSIZE(m_textureNames)))
 		{
 			switch (extraData[i].entityType)
 			{
-			case 1: // Player
+			case EntityType::Player:
 				spriteData.halfSize = Vec2f{ 2.0f, 1.0f };
 				spriteData.texPartScale = Vec2f{ 1.0f / 10.0f, 1.0f / 10.0f };
 				spriteData.texPartIndex = Vec2f{ 0.0f, 0.0f };
 				break;
-			case 2: // EnemyRatWatcher
-			case 3: // EnemyRatSniffer
+			case EntityType::EnemyRatWatcher:
+			case EntityType::EnemyRatSniffer:
 				spriteData.texPartScale = Vec2f{ 1.0f / 10.0f, 1.0f / 10.0f };
 				spriteData.texPartIndex = Vec2f{ 0.0f, 1.0f };
 				extraData[i].blocking = true;
@@ -398,8 +419,6 @@ void EditorScene::createImGuiEntities(std::vector<std::unique_ptr<TextureSprite>
 			extraData.erase(extraData.begin() + i);
 			break; // for safety
 		}
-
-		i++;
 	}
 
 	ImGui::Text((std::string("New ") + labelName).c_str());

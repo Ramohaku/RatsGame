@@ -40,6 +40,7 @@ Application::Application()
     ImGui::StyleColorsDark();
 
     m_appSceneData.textureShader = std::make_unique<Shader>("res/shaders/texture_shader.vert", "res/shaders/texture_shader.frag");
+    m_appSceneData.textureEditorShader = std::make_unique<Shader>("res/shaders/texture_shader.vert", "res/shaders/texture_editor_shader.frag");
     m_appSceneData.shadowShader = std::make_unique<Shader>("res/shaders/shadow_shader.vert", "res/shaders/shadow_shader.frag");
     m_appSceneData.uiShader = std::make_unique<Shader>("res/shaders/ui_shader.vert", "res/shaders/ui_shader.frag");
 
@@ -48,7 +49,9 @@ Application::Application()
         samplers[i] = i;
     m_appSceneData.textureShader->bind();
     m_appSceneData.textureShader->setUniform1iv("u_Textures", m_appSceneData.maxTextureUnits, samplers);
-    m_appSceneData.textureShader->setUniform1i("u_AllLight", 0);
+    m_appSceneData.textureEditorShader->bind();
+    m_appSceneData.textureEditorShader->setUniform1iv("u_Textures", m_appSceneData.maxTextureUnits, samplers);
+    m_appSceneData.textureEditorShader->setUniform1i("u_AllLight", 0);
     m_appSceneData.shadowShader->bind();
     m_appSceneData.shadowShader->setUniform1iv("u_Textures", m_appSceneData.maxTextureUnits, samplers);
     m_appSceneData.uiShader->bind();
@@ -253,14 +256,15 @@ void Application::clean()
         va.onClean();
 
     m_appSceneData.textureShader->onClean();
+    m_appSceneData.textureEditorShader->onClean();
     m_appSceneData.shadowShader->onClean();
     m_appSceneData.uiShader->onClean();
 
     m_screenShader->onClean();
     m_screenVertexArray->onClean();
 
-    for (auto& [name, textue] : m_appSceneData.textures)
-        textue->onClean();
+    for (auto& [name, texture] : m_appSceneData.textures)
+        texture->onClean();
 
     delete m_currentScene;
 }

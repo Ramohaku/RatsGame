@@ -106,7 +106,7 @@ void Scene::onUpdate(float deltaTime)
         m_window->updateView(m_player->getCenter(), m_player->getRotation() + PI_F / 2.0f);
     }
 
-    updateLights();
+    updateLights(m_appSceneData.textureShader);
 }
 
 void Scene::onRender()
@@ -143,7 +143,7 @@ void Scene::addTargetPoint(EnemyRatSniffer* rat, const Vec2f& point)
     rat->addTargetPoint(point);
 }
 
-void Scene::updateLights()
+void Scene::updateLights(const std::unique_ptr<Shader>& textureShader)
 {
     float lightStrength = 0.0f;
     std::vector<Vec4f> lightsColors;
@@ -195,11 +195,11 @@ void Scene::updateLights()
     const auto mvp = m_window->getProj() * m_window->getView();
     const int lightsCount = lightsColors.size();
 
-    m_appSceneData.textureShader->bind();
-    m_appSceneData.textureShader->setUniformMat4f("u_MVP", mvp);
-    m_appSceneData.textureShader->setUniform1i("u_LightsCount", lightsCount);
-    m_appSceneData.textureShader->setUniform4fv("u_LightsColors", lightsCount, lightsColors.data());
-    m_appSceneData.textureShader->setUniform4fv("u_LightsData", lightsCount, lightsData.data());
+    textureShader->bind();
+    textureShader->setUniformMat4f("u_MVP", mvp);
+    textureShader->setUniform1i("u_LightsCount", lightsCount);
+    textureShader->setUniform4fv("u_LightsColors", lightsCount, lightsColors.data());
+    textureShader->setUniform4fv("u_LightsData", lightsCount, lightsData.data());
 
     m_appSceneData.shadowShader->bind();
     m_appSceneData.shadowShader->setUniformMat4f("u_MVP", mvp);
@@ -310,10 +310,10 @@ void Scene::loadEntities(const char* fileName)
                 break;
             }
 
-            const int entityType = data["entityType"].get<int>();
+            const EntityType entityType = data["entityType"].get<EntityType>();
             switch (entityType)
             {
-            case 0:
+            case EntityType::TextureSprite:
             {
                 auto sprite = std::make_unique<TextureSprite>(spriteData);
                 if (shadows)
@@ -324,7 +324,7 @@ void Scene::loadEntities(const char* fileName)
                 textureSprites->push_back(std::move(sprite));
                 break;
             }
-            case 1:
+            case EntityType::Player:
             {
                 auto sprite = std::make_unique<Player>(spriteData, m_window);
                 m_player = sprite.get();
@@ -336,7 +336,7 @@ void Scene::loadEntities(const char* fileName)
                 textureSprites->push_back(std::move(sprite));
                 break;
             }
-            case 2:
+            case EntityType::EnemyRatWatcher:
             {
                 std::vector<SoundBuffer*> buffers(RAT_SOUNDS_COUNT);
                 
@@ -356,7 +356,7 @@ void Scene::loadEntities(const char* fileName)
                 textureSprites->push_back(std::move(sprite));
                 break;
             }
-            case 3:
+            case EntityType::EnemyRatSniffer:
             {
                 auto sprite = std::make_unique<EnemyRatSniffer>(spriteData, m_player);
                 if (shadows)

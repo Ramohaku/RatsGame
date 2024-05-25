@@ -31,5 +31,6 @@ private:
 	Vec2f m_viewCenter{};
 
 	bool m_allLight = false;
+	TextureSprite* m_selectedTextureSprite = nullptr;
 };
 

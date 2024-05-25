@@ -241,6 +241,7 @@
     <None Include="res\shaders\screen_shader.vert" />
     <None Include="res\shaders\shadow_shader.frag" />
     <None Include="res\shaders\shadow_shader.vert" />
+    <None Include="res\shaders\texture_editor_shader.frag" />
     <None Include="res\shaders\texture_shader.frag" />
     <None Include="res\shaders\texture_shader.vert" />
     <None Include="res\shaders\ui_shader.frag" />

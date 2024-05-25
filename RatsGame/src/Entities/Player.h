@@ -64,4 +64,6 @@ private:
 
 	float m_lastMouseX = 0.0f;
 	bool m_preDown = false;
+	bool m_preLeft = false;
+	bool m_preRight = false;
 };

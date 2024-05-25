@@ -231,5 +231,6 @@
     <None Include="res\scenesData\level1.json" />
     <None Include="res\shaders\screen_shader.vert" />
     <None Include="res\shaders\screen_shader.frag" />
+    <None Include="res\shaders\texture_editor_shader.frag" />
   </ItemGroup>
 </Project>

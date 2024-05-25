@@ -15,6 +15,7 @@ struct AppSceneData
 	std::unordered_map<std::string, SoundBuffer> soundBuffers;
 
 	std::unique_ptr<Shader> textureShader;
+	std::unique_ptr<Shader> textureEditorShader;
 	std::unique_ptr<Shader> shadowShader;
 	std::unique_ptr<Shader> uiShader;
 
@@ -29,10 +30,15 @@ struct AppSceneData
 class Scene
 {
 protected:
+	enum class EntityType
+	{
+		TextureSprite = 0, Player, EnemyRatWatcher, EnemyRatSniffer
+	};
+
 	struct ExtraData
 	{
 		char name[20]{};
-		int entityType = 0;
+		EntityType entityType = EntityType::TextureSprite;
 		std::string textureName;
 		bool shadows = true;
 		bool blocking = false;
@@ -55,12 +61,12 @@ public:
 public:
 	static bool s_skip;
 protected:
-	void updateLights();
+	void updateLights(const std::unique_ptr<Shader>& textureShader);
 	void loadEntities(const char* fileName);
 
 	virtual void onPauseStart() {}
 	virtual void onPauseEnd() {}
-private:
+
 	template <typename VertexType, typename SpriteType>
 	void renderSprites(
 		std::vector<VertexArray<VertexType>>& vertexArrays,

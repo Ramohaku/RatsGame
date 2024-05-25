@@ -130,8 +130,21 @@ void Player::onUpdate(float deltaTime)
 		m_destRotation = m_destRotation - PI_F;
 		correctAngleTooSmall(m_destRotation);
 	}
+	
+	if (left && !m_preLeft)
+	{
+		m_destRotation = m_destRotation - PI_F / 2.0f;
+		correctAngleTooSmall(m_destRotation);
+	}
+	else if (right && !m_preRight)
+	{
+		m_destRotation = m_destRotation + PI_F / 2.0f;
+		correctAngleTooBig(m_destRotation);
+	}
 
 	m_preDown = down;
+	m_preLeft = left;
+	m_preRight = right;
 
 
 
