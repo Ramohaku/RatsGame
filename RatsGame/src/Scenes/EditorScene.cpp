@@ -58,6 +58,18 @@ void EditorScene::onUpdate(float deltaTime)
 
 		m_window->updateView(m_viewCenter, 0.0f);
 
+		const int mouseState = glfwGetMouseButton(m_window->getGlfwWindow(), GLFW_MOUSE_BUTTON_LEFT);
+
+		if (mouseState == GLFW_PRESS)
+		{
+			mouseX = (mouseX - m_window->getWidth() / 2.0f) * m_window->getScale() + m_viewCenter.x;
+			mouseY = -(mouseY - m_window->getHeight() / 2.0f) * m_window->getScale() + m_viewCenter.y;
+			
+			std::cerr << mouseX << ", " << mouseY << '\n';
+		}
+
+
+
 
 		if (escPressed && !m_escPrePressed)
 		{
@@ -339,12 +351,9 @@ void EditorScene::onRender()
 	double mouseX, mouseY;
 	glfwGetCursorPos(m_window->getGlfwWindow(), &mouseX, &mouseY);
 
-	if (m_player)
-	{
-		mouseX = (mouseX - m_window->getWidth() / 2.0f) * m_window->getScale() + m_player->getCenter().x;
-		mouseY = -(mouseY - m_window->getHeight() / 2.0f) * m_window->getScale() + m_player->getCenter().y;
-	}
-
+	mouseX = (mouseX - m_window->getWidth() / 2.0f) * m_window->getScale() + m_viewCenter.x;
+	mouseY = -(mouseY - m_window->getHeight() / 2.0f) * m_window->getScale() + m_viewCenter.y;
+	
 	ImGui::Text("x: %f, y: %f", mouseX, mouseY);
 
 	if (ImGui::Button("Toggle all black"))
