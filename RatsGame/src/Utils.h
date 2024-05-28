@@ -13,7 +13,8 @@
 template <typename T>
 struct Vec2
 {
-	T x, y;
+	union { T x, width; };
+	union { T y, height; };
 
 	Vec2 operator+(const Vec2& other) const
 	{

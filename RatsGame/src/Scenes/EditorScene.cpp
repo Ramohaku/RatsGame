@@ -9,6 +9,11 @@ EditorScene::EditorScene(Window* window, AppSceneData& appSceneData)
 	//m_textures(textures)
 {
 	m_rangeOptimize = false;
+
+	SpriteData spriteData;
+	spriteData.texturePtr = m_appSceneData.textures.at("EntityHighlight").get();
+	auto entityHighlight = std::make_unique<TextureSprite>(spriteData);
+	m_entityHighlights.push_back(std::move(entityHighlight));
 }
 
 void EditorScene::onUpdate(float deltaTime)
@@ -62,10 +67,12 @@ void EditorScene::onUpdate(float deltaTime)
 
 		if (mouseState == GLFW_PRESS)
 		{
-			mouseX = (mouseX - m_window->getWidth() / 2.0f) * m_window->getScale() + m_viewCenter.x;
-			mouseY = -(mouseY - m_window->getHeight() / 2.0f) * m_window->getScale() + m_viewCenter.y;
+			mouseX = (mouseX - m_window->getWidth() / 2.0) * m_window->getScale() + m_viewCenter.x;
+			mouseY = -(mouseY - m_window->getHeight() * 3.0 / 4.0) * m_window->getScale() + m_viewCenter.y;
 			
-			std::cerr << mouseX << ", " << mouseY << '\n';
+			selectEntity(Vec2f{ static_cast<float>(mouseX), static_cast<float>(mouseY) });
+
+			//std::cerr << mouseX << ", " << mouseY << '\n';
 		}
 
 
@@ -86,11 +93,13 @@ void EditorScene::onUpdate(float deltaTime)
 void EditorScene::onRender()
 {
 	renderSprites(m_appSceneData.textureVertexArraysBack, m_textureSpritesBack, m_appSceneData.textureEditorShader.get());
-	renderSprites(m_appSceneData.shadowVertexArraysMiddle, m_shadowSpritesMiddle, m_appSceneData.shadowShader.get());
 	renderSprites(m_appSceneData.textureVertexArraysMiddle, m_textureSpritesMiddle, m_appSceneData.textureEditorShader.get());
-	renderSprites(m_appSceneData.shadowVertexArraysFront, m_shadowSpritesFront, m_appSceneData.shadowShader.get());
 	renderSprites(m_appSceneData.textureVertexArraysFront, m_textureSpritesFront, m_appSceneData.textureEditorShader.get());
 	renderSprites(m_appSceneData.uiVertexArrays, m_uiSprites, m_appSceneData.uiShader.get());
+	if (m_selectedTextureSprite)
+	{
+		renderSprites(m_appSceneData.textureVertexArraysFront, m_entityHighlights, m_appSceneData.textureEditorShader.get());
+	}
 
 	ImGui::Begin("Lights");
 
@@ -351,8 +360,8 @@ void EditorScene::onRender()
 	double mouseX, mouseY;
 	glfwGetCursorPos(m_window->getGlfwWindow(), &mouseX, &mouseY);
 
-	mouseX = (mouseX - m_window->getWidth() / 2.0f) * m_window->getScale() + m_viewCenter.x;
-	mouseY = -(mouseY - m_window->getHeight() / 2.0f) * m_window->getScale() + m_viewCenter.y;
+	mouseX = (mouseX - m_window->getWidth() / 2.0) * m_window->getScale() + m_viewCenter.x;
+	mouseY = -(mouseY - m_window->getHeight() * 3.0 / 4.0) * m_window->getScale() + m_viewCenter.y;
 	
 	ImGui::Text("x: %f, y: %f", mouseX, mouseY);
 
@@ -381,7 +390,7 @@ void EditorScene::createImGuiEntities(std::vector<std::unique_ptr<TextureSprite>
 			}
 			else
 			{
-				m_selectedTextureSprite = entity.get();
+				selectEntity(entity.get());
 			}
 		}
 
@@ -456,4 +465,50 @@ void EditorScene::createImGuiEntities(std::vector<std::unique_ptr<TextureSprite>
 			std::cerr << "Cannot find texture!\n";
 		}
 	}
+}
+
+void EditorScene::selectEntity(TextureSprite* entity)
+{
+	m_selectedTextureSprite = entity;
+	m_entityHighlights[0]->setCenter(entity->getCenter());
+	m_entityHighlights[0]->setRotation(entity->getRotation());
+	m_entityHighlights[0]->setHalfSize(entity->getHalfSize());
+}
+
+void EditorScene::selectEntity(const Vec2f& mousePosition)
+{
+	if (trySetSelectedTextureSprite(mousePosition, m_textureSpritesFront))
+		return;
+	if (trySetSelectedTextureSprite(mousePosition, m_textureSpritesMiddle))
+		return;
+	trySetSelectedTextureSprite(mousePosition, m_textureSpritesBack);
+}
+
+bool EditorScene::trySetSelectedTextureSprite(const Vec2f& mousePosition, const std::vector<std::unique_ptr<TextureSprite>>& sprites)
+{
+	for (auto it = sprites.rbegin(); it != sprites.rend(); ++it)
+	{
+		auto& entity = *it;
+
+		const auto& center = entity->getCenter();
+		const float translatedX = mousePosition.x - center.x;
+		const float translatedY = mousePosition.y - center.y;
+
+		const float rotationCos = cos(entity->getRotation());
+		const float rotationSin = sin(entity->getRotation());
+
+		const float rotatedX = translatedX * rotationCos - translatedY * rotationSin;
+		const float rotatedY = translatedX * rotationSin + translatedY * rotationCos;
+
+		const auto& halfSize = entity->getHalfSize();
+		const bool insideX = rotatedX <= halfSize.width && rotatedX >= -halfSize.width;
+		const bool insideY = rotatedY <= halfSize.height && rotatedY >= -halfSize.height;
+
+		if (insideX && insideY)
+		{
+			selectEntity(entity.get());
+			return true;
+		}
+	}
+	return false;
 }

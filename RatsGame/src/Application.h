@@ -1,5 +1,10 @@
 #pragma once
+
+#define INDLUDE_EDITOR 1
+
+#if INDLUDE_EDITOR
 #include "Scenes/EditorScene.h"
+#endif
 #include "Scenes/LevelScenes.h"
 
 class Application
@@ -18,7 +23,9 @@ private:
 
 	void createNewScene();
 	void createMainMenu();
+#if INDLUDE_EDITOR
 	void createEditorScene();
+#endif
 
 	void createLevel1();
 	void createLevel2();

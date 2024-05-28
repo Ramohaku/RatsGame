@@ -12,6 +12,9 @@ public:
 	void onRender() override;
 private:
 	void createImGuiEntities(std::vector<std::unique_ptr<TextureSprite>>& sprites, std::vector<ExtraData>& extraData, const std::string labelName, char* buffer);
+	void selectEntity(TextureSprite* entity);
+	void selectEntity(const Vec2f& mousePosition);
+	bool trySetSelectedTextureSprite(const Vec2f& mousePosition, const std::vector<std::unique_ptr<TextureSprite>>& sprites);
 private:
 	char m_texturesBackBuffer[30]{};
 	char m_texturesMiddleBuffer[30]{};
@@ -32,5 +35,7 @@ private:
 
 	bool m_allLight = false;
 	TextureSprite* m_selectedTextureSprite = nullptr;
+
+	std::vector<std::unique_ptr<TextureSprite>> m_entityHighlights;
 };
 

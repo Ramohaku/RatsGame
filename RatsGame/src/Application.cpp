@@ -77,6 +77,10 @@ Application::Application()
     m_testBlock2Texture = std::make_unique<Texture>("res/textures/testBlock2.png");
     m_testButtonTexture = std::make_unique<Texture>("res/textures/testButton.png");*/
 
+#if INDLUDE_EDITOR
+    createTexture("EntityHighlight", "res/textures/editor/entityHighlight.png");
+#endif
+
 
     glGenFramebuffers(1, &m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
@@ -295,13 +299,16 @@ void Application::createMainMenu()
     };
     m_currentScene->createButton(Vec2f{ 0.0f, 0.0f }, Vec2f{ 150.0f, 50.0f }, m_appSceneData.textures.at("TestButton").get(), UISprite::Center, testLevelButtonPresses);
 
+#if INDLUDE_EDITOR
     ButtonPresses editorLevelButtonPresses;
     editorLevelButtonPresses.onRelease = [this] {
         createEditorScene();
     };
     m_currentScene->createButton(Vec2f{ 0.0f, 200.0f }, Vec2f{ 150.0f, 50.0f }, m_appSceneData.textures.at("TestButton").get(), UISprite::Center, editorLevelButtonPresses);
+#endif
 }
 
+#if INDLUDE_EDITOR
 void Application::createEditorScene()
 {
     Scene::s_skip = true;
@@ -309,6 +316,7 @@ void Application::createEditorScene()
     delete m_currentScene;
     m_currentScene = new EditorScene(&m_window, m_appSceneData);
 }
+#endif
 
 void Application::createLevel1()
 {
