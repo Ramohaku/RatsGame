@@ -76,7 +76,12 @@ void EditorScene::onUpdate(float deltaTime)
 		}
 
 
-
+		if (m_selectedTextureSprite)
+		{
+			m_entityHighlights[0]->setCenter(m_selectedTextureSprite->getCenter());
+			m_entityHighlights[0]->setRotation(m_selectedTextureSprite->getRotation());
+			m_entityHighlights[0]->setHalfSize(m_selectedTextureSprite->getHalfSize());
+		}
 
 		if (escPressed && !m_escPrePressed)
 		{
@@ -470,13 +475,12 @@ void EditorScene::createImGuiEntities(std::vector<std::unique_ptr<TextureSprite>
 void EditorScene::selectEntity(TextureSprite* entity)
 {
 	m_selectedTextureSprite = entity;
-	m_entityHighlights[0]->setCenter(entity->getCenter());
-	m_entityHighlights[0]->setRotation(entity->getRotation());
-	m_entityHighlights[0]->setHalfSize(entity->getHalfSize());
 }
 
 void EditorScene::selectEntity(const Vec2f& mousePosition)
 {
+	if (ImGui::GetIO().WantCaptureMouse)
+		return;
 	if (trySetSelectedTextureSprite(mousePosition, m_textureSpritesFront))
 		return;
 	if (trySetSelectedTextureSprite(mousePosition, m_textureSpritesMiddle))

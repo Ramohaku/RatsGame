@@ -4,7 +4,7 @@
 #include "VertexArray.h"
 
 Application::Application()
-	: m_window(/*1920, 1080,*/ "Rats game", 0.03f, true),
+	: m_window(/*1920, 1080,*/ "Rats game", 0.03f, false),
     m_screenVertices{
         { Vec2f{ -1.0f, -1.0f }, Vec2f{ 0.0f, 0.0f } },
         { Vec2f{  1.0f, -1.0f }, Vec2f{ 1.0f, 0.0f } },
